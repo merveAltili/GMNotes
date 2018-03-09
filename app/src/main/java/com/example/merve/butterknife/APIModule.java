@@ -11,7 +11,6 @@ public class APIModule {
     private static  final String NodeAdd_URL="http://10.17.0.46";
     public static Retrofit connectNodeAPI(){
         return new Retrofit.Builder().baseUrl(NodeAdd_URL)
-                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 }

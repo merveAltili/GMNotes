@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.merve.butterknife.NoteActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:orientation="vertical"
-        android:background="@color/mavi">
+        android:background="@color/mavi"
+        android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="150dp">
@@ -37,14 +39,15 @@
                 android:layout_marginTop="11dp"
                 android:layout_toEndOf="@+id/imageButton"
                 android:text="GM Notes"
-                android:textSize="20dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
             <LinearLayout
-                android:layout_marginTop="85dp"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="85dp"
                 android:background="@color/white"
                 android:orientation="horizontal">
 
@@ -53,13 +56,13 @@
                     android:id="@+id/searchView"
                     android:layout_width="300dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"/>
+                    android:gravity="center" />
 
                 <ImageButton
                     android:layout_width="50dp"
                     android:layout_height="45dp"
-                    android:background="@color/white"
                     android:layout_gravity="center"
+                    android:background="@color/white"
                     android:tint="@color/gri"
                     app:srcCompat="@drawable/ic_keyboard_voice_black_24dp" />
 
@@ -70,17 +73,20 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listNote"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="wrap_content"
+        app:layoutManager="LinearLayoutManager" />
+
     <ImageButton
         android:id="@+id/imgNoteAdd"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="300dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/ic_add_circle_black_24dp"
         android:backgroundTint="@color/gri"
-        android:tint="@color/gri"
-        android:background="@drawable/ic_add_circle_black_24dp" />
+        android:tint="@color/gri" />
 
 </LinearLayout>

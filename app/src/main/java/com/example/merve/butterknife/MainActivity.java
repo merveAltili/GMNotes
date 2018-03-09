@@ -1,5 +1,6 @@
 package com.example.merve.butterknife;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.model.LoginResponse;
 
 import butterknife.BindView;
@@ -28,12 +30,17 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btnLogin)
     Button btnLogin;
 
+    public static AppDatabase database;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        database=Room.databaseBuilder(this,AppDatabase.class,"NoteDB").build();
+
     }
 
 
@@ -42,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
         if (edtPassword.getText().toString().isEmpty() || edtUsername.getText().toString().isEmpty()) {
             Toast.makeText(getApplicationContext(), "Try again with correct username or password", Toast.LENGTH_SHORT).show();
 
-        } else if (edtUsername.getText().toString().equals("telpa") && edtPassword.getText().toString().equals("123456")) {
+        }
+        else if(edtUsername.getText().toString().length()>10) {
+            Toast.makeText(getApplicationContext(), "maximum 10 characters", Toast.LENGTH_SHORT).show();
+
+        }else  {
 
                 NodeAPI apiService = APIModule.connectNodeAPI().create(NodeAPI.class);
 
-                    Call<LoginResponse> call = apiService.sendLogin(edtUsername.getText().toString().trim(), edtUsername.getText().toString().trim());
+                    Call<LoginResponse> call = apiService.sendLogin(edtUsername.getText().toString().trim(), edtPassword.getText().toString().trim());
                     call.enqueue(new Callback<LoginResponse>() {
                         @Override
                         public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -55,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
                                 Intent i=new Intent(getApplicationContext(),NoteActivity.class);
                                 startActivity(i);
+                                finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), "hata", Toast.LENGTH_LONG).show();
                             }
@@ -63,16 +75,12 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<LoginResponse> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Böyle bir kullanıcı bulunamadı !", Toast.LENGTH_SHORT).show();
 
                         }
                     });
 
-                } else if(edtUsername.getText().toString().length()>10) {
-                    Toast.makeText(getApplicationContext(), "maximum 10 characters", Toast.LENGTH_SHORT).show();
-
                 }
-                else{
-            Toast.makeText(getApplicationContext(), "Böyle bir kullanıcı bulunamadı !", Toast.LENGTH_SHORT).show();
-        }
+
     }
 }
