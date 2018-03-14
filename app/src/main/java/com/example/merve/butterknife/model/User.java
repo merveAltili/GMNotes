@@ -1,4 +1,4 @@
-package com.example.merve.butterknife.db;
+package com.example.merve.butterknife.model;
 
 import android.arch.persistence.room.PrimaryKey;
 

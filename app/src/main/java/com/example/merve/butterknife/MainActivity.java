@@ -2,7 +2,9 @@ package com.example.merve.butterknife;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.widget.Button;
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static AppDatabase database;
 
-
+private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         database=Room.databaseBuilder(this,AppDatabase.class,"NoteDB").build();
+
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(sharedPreferences.getString("username","")!=""){
+            Intent i=new Intent(getApplicationContext(),NoteActivity.class);
+            startActivity(i);
+
+            finish();
+        }
 
     }
 
@@ -56,29 +66,33 @@ public class MainActivity extends AppCompatActivity {
         }else  {
 
                 NodeAPI apiService = APIModule.connectNodeAPI().create(NodeAPI.class);
-
-                    Call<LoginResponse> call = apiService.sendLogin(edtUsername.getText().toString().trim(), edtPassword.getText().toString().trim());
-                    call.enqueue(new Callback<LoginResponse>() {
-                        @Override
-                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                            if (response.isSuccessful()) {
+//
+//                    Call<LoginResponse> call = apiService.sendLogin(edtUsername.getText().toString(), edtPassword.getText().toString());
+//                    call.enqueue(new Callback<LoginResponse>() {
+//                        @Override
+//                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+//                            if (response.body().getLoginSuccess().equals("true")) {
                                 String res = "Giriş Başarılı ";
                                 Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
+                                SharedPreferences.Editor editor= sharedPreferences.edit();
+                                editor.putString("username",edtUsername.getText().toString());
+                                editor.apply();
                                 Intent i=new Intent(getApplicationContext(),NoteActivity.class);
                                 startActivity(i);
+
                                 finish();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "hata", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<LoginResponse> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            Toast.makeText(getApplicationContext(), "Böyle bir kullanıcı bulunamadı !", Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
+//                            } else {
+//                                Toast.makeText(getApplicationContext(), "hata", Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<LoginResponse> call, Throwable t) {
+//                            Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getApplicationContext(), "Böyle bir kullanıcı bulunamadı !", Toast.LENGTH_SHORT).show();
+//
+//                        }
+//                    });
 
                 }
 

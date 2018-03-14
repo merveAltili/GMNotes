@@ -3,8 +3,6 @@ package com.example.merve.butterknife.db.Entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.example.merve.butterknife.db.User;
-
 /**
  * Created by merve on 08.03.2018.
  */
@@ -15,10 +13,30 @@ public class NoteEntity {
     private Long id;
     private String title;
     private String detail;
-    private Integer user;
+    private String user;
 
-    public NoteEntity(Long id, String title, String detail, Integer user) {
-        this.id = id;
+    public String getKategori() {
+        return kategori;
+    }
+
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
+    }
+
+    private String kategori;
+
+    public Long getKategoriId() {
+        return kategoriId;
+    }
+
+    public void setKategoriId(Long kategoriId) {
+        this.kategoriId = kategoriId;
+    }
+
+    private Long kategoriId;
+
+    public NoteEntity( String title, String detail, String user, Long kategoriId) {
+        this.kategoriId=kategoriId;
         this.title = title;
         this.detail = detail;
         this.user = user;
@@ -51,11 +69,11 @@ public class NoteEntity {
         this.detail = detail;
     }
 
-    public Integer getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Integer user) {
+    public void setUser(String user) {
         this.user = user;
 
     }

@@ -21,10 +21,8 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/imageButton"
                 android:layout_marginStart="70dp"
-                android:layout_marginTop="11dp"
-                android:layout_toEndOf="@+id/imageButton"
+                android:layout_margin="16dp"
                 android:text="New Note"
                 android:textSize="20dp"
                 android:textColor="@color/white"/>
@@ -38,14 +36,14 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="8dp"
         android:text="Title" />
 
     <EditText
         android:id="@+id/edtTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="8dp"
         android:ems="10"
         android:inputType="textPersonName" />
 
@@ -53,14 +51,28 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="8dp"
         android:text="Detail" />
 
     <EditText
         android:id="@+id/edtDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="8dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/txtKategori"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="Kategori" />
+    <EditText
+        android:id="@+id/edtKategori"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:ems="10"
         android:inputType="textPersonName" />
 
@@ -68,7 +80,7 @@
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_margin="8dp"
         android:backgroundTint="@color/gri"
         android:textColor="@color/white"
         android:text="SAVE" />

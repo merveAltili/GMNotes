@@ -6,7 +6,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import com.example.merve.butterknife.db.Entity.NoteEntity;
-import com.example.merve.butterknife.db.User;
 
 import java.util.List;
 
@@ -20,8 +19,12 @@ public interface NoteDao {
     @Delete
     public void DeleteNote(NoteEntity note);
 
-    @Query("SELECT * FROM Note WHERE user= :user")
-    public List<NoteEntity> getNotesByUser(Integer user);
+    @Query("SELECT * FROM Note WHERE kategori= :kategori")
+    public List<NoteEntity> getNotesByKategori(String kategori);
+
+
+    @Query("SELECT distinct kategori FROM Note ")
+    public List<NoteEntity>  getKategoris();
 
 }
 
