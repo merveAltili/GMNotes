@@ -6,31 +6,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.merve.butterknife.NoteAddActivity">
-    <LinearLayout
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="vertical"
-        android:background="@color/mavi">
-        <RelativeLayout
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="70dp"
-                android:layout_margin="16dp"
-                android:text="New Note"
-                android:textSize="20dp"
-                android:textColor="@color/white"/>
-
-        </RelativeLayout>
-
-
-    </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
     <TextView
         android:id="@+id/textView2"
@@ -59,31 +50,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
+        android:inputType="textMultiLine" />
 
-    <TextView
-        android:id="@+id/txtKategori"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="Kategori" />
-    <EditText
-        android:id="@+id/edtKategori"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
 
-    <Button
-        android:id="@+id/btnSave"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/gri"
-        android:textColor="@color/white"
-        android:text="SAVE" />
+        android:layout_margin="8dp">
+
+        <Button
+            android:id="@+id/btnRenk"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnSave"
+            android:layout_alignParentStart="true"
+            android:layout_margin="6dp"
+            android:textSize="16sp"
+            android:background="@color/white2"
+            android:drawableLeft="@drawable/ic_block_black_24dp"
+            android:text="renk seç"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnMedia"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:drawableLeft="@drawable/ic_add_black_24dp"
+            android:layout_above="@+id/btnSave"
+            android:background="@color/white2"
+            android:textStyle="bold"
+            android:text="medya ekle"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/gri"
+            android:text="SAVE"
+            android:textColor="@color/white" />
+    </RelativeLayout>
 
 </LinearLayout>
 

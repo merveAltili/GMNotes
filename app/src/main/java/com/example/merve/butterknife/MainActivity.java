@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static AppDatabase database;
 
-private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,22 +65,22 @@ private SharedPreferences sharedPreferences;
 
         }else  {
 
-                NodeAPI apiService = APIModule.connectNodeAPI().create(NodeAPI.class);
+            NodeAPI apiService = APIModule.connectNodeAPI().create(NodeAPI.class);
 //
 //                    Call<LoginResponse> call = apiService.sendLogin(edtUsername.getText().toString(), edtPassword.getText().toString());
 //                    call.enqueue(new Callback<LoginResponse>() {
 //                        @Override
 //                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 //                            if (response.body().getLoginSuccess().equals("true")) {
-                                String res = "Giriş Başarılı ";
-                                Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
-                                SharedPreferences.Editor editor= sharedPreferences.edit();
-                                editor.putString("username",edtUsername.getText().toString());
-                                editor.apply();
-                                Intent i=new Intent(getApplicationContext(),NoteActivity.class);
-                                startActivity(i);
+            String res = "Giriş Başarılı ";
+            Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor= sharedPreferences.edit();
+            editor.putString("username",edtUsername.getText().toString());
+            editor.apply();
+            Intent i=new Intent(getApplicationContext(),NoteActivity.class);
+            startActivity(i);
 
-                                finish();
+            finish();
 //                            } else {
 //                                Toast.makeText(getApplicationContext(), "hata", Toast.LENGTH_LONG).show();
 //                            }
@@ -94,7 +94,7 @@ private SharedPreferences sharedPreferences;
 //                        }
 //                    });
 
-                }
+        }
 
     }
 }

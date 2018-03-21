@@ -14,32 +14,36 @@ public class NoteEntity {
     private String title;
     private String detail;
     private String user;
+    private Long date;
 
-    public String getKategori() {
-        return kategori;
+    public Integer getColors() {
+        return colors;
     }
 
-    public void setKategori(String kategori) {
-        this.kategori = kategori;
+    public void setColors(Integer colors) {
+        this.colors = colors;
     }
 
-    private String kategori;
+    private Integer colors;
 
-    public Long getKategoriId() {
-        return kategoriId;
+    public Long getDate() {
+        return date;
     }
 
-    public void setKategoriId(Long kategoriId) {
-        this.kategoriId = kategoriId;
+    public void setDate(Long date) {
+        this.date = date;
     }
 
-    private Long kategoriId;
 
-    public NoteEntity( String title, String detail, String user, Long kategoriId) {
-        this.kategoriId=kategoriId;
+
+
+
+    public NoteEntity( String title, String detail, String user,Long date) {
+
         this.title = title;
         this.detail = detail;
         this.user = user;
+        this.date=date;
     }
     public NoteEntity(){
 

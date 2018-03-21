@@ -8,11 +8,11 @@ import android.arch.persistence.room.PrimaryKey;
 
 public class User {
     @PrimaryKey
-    private Integer id;
+    private Long id;
     private String username;
     private String password;
 
-public User(Integer id, String username,String password){
+public User(Long id, String username,String password){
     this.id=id;
     this.username=username;
     this.password=password;
@@ -21,11 +21,11 @@ public User(Integer id, String username,String password){
 public User(){
 
     }
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

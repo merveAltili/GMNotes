@@ -1,35 +1,54 @@
 package com.example.merve.butterknife;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 import com.example.merve.butterknife.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoteActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterOnCLickListener {
+
+    final User u = new User();
+
+    CursorAdapter cursorAdapter;
+    String mCurFilter;
+    @BindView(R.id.recyclerView)
+    RecyclerView rvMain;
+
+    private NoteAdapter mAdapter;
+
 
     @BindView(R.id.imgNoteAdd)
     ImageButton imgNoteAdd;
@@ -37,20 +56,17 @@ public class NoteActivity extends AppCompatActivity {
     @BindView(R.id.searchView)
     SearchView searchView;
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
-    @BindView(R.id.spinnerKategori)
-    Spinner spinnerKategori;
-    @BindView(R.id.activity_dashboard)
-    CoordinatorLayout activityDashboard;
 
     private SharedPreferences sharedPreferences;
-    List<String> list = new ArrayList<>();
+
+    static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
+            ContactsContract.Contacts._ID,
+            ContactsContract.Contacts.DISPLAY_NAME,
+
+    };
+    private StaggeredGridLayoutManager layoutManager;
+    RecyclerView rvMain2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,34 +75,24 @@ public class NoteActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-new Thread(new Runnable() {
-    @Override
-    public void run() {
-        for (NoteEntity noteEntity : MainActivity.database.notedao().getKategoris()) {
-            list.add(noteEntity.getKategori());
-        }
-        spinnerKategori.setPrompt("Lüften bir değer seçiniz");
-        spinnerKategori.setAdapter(new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, list));
-        spinnerKategori.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                refreshAdapter(i);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+        rvMain.setHasFixedSize(true);
 
-            }
-        });
+        layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        rvMain.setLayoutManager(layoutManager);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-    }
-}).start();
+        u.setUsername(sharedPreferences.getString("username", ""));
 
 
         // inflater.inflate(R.xml.search,xml);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshAdapter();
     }
 
     @OnClick(R.id.imgNoteAdd)
@@ -94,20 +100,83 @@ new Thread(new Runnable() {
         Intent i = new Intent(this, NoteAddActivity.class);
         startActivity(i);
     }
-    void refreshAdapter(final int i){
+
+    void refreshAdapter() {
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                final NoteAdapter adapter = new NoteAdapter(MainActivity.database.notedao().getNotesByKategori(list.get(i)));
+
+                final NoteAdapter adapter = new NoteAdapter(MainActivity.database.notedao().getNotesByUser(u.getUsername()),NoteActivity.this);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        recyclerView.setAdapter(adapter);
+
+                        rvMain.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+
                     }
                 });
 
             }
         }).start();
+    }
+
+    public void itemOnclick(View view){
+        Intent i=new Intent(NoteActivity.this,DetailActivity.class);
+        startActivity(i);
+    }
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri baseUri;
+        if (mCurFilter != null) {
+            baseUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI,
+                    Uri.encode(mCurFilter));
+        } else {
+            baseUri = ContactsContract.Contacts.CONTENT_URI;
+        }
+        String select = "(" + ContactsContract.Contacts.DISPLAY_NAME + "like '%'" + mCurFilter + "%'" + ")";
+        System.out.println(select);
+        return new CursorLoader(this, baseUri, CONTACTS_SUMMARY_PROJECTION, select, null,
+                ContactsContract.Contacts.DISPLAY_NAME + "ASC");
+
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        if (cursorAdapter != null)
+            cursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (cursorAdapter != null)
+            cursorAdapter.swapCursor(null);
+    }
+
+
+    private void commitQeury(String key) {
+        Intent in = new Intent("android.intent.action.SEARCH");
+        in.putExtra(SearchManager.QUERY, key);
+        startActivity(in);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+//SORUN-------------------------------------------------------------------------------->>>>>>>>>>>>>>><
+    @Override
+    public void onClick(View view, int position) {
+        NoteEntity item= ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        Intent i=new Intent(NoteActivity.this,DetailActivity.class);
+
+        i.putExtra("item",item.getId());
+        startActivity(i);
+
     }
 }

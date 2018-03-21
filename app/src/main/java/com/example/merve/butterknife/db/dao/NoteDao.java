@@ -19,12 +19,17 @@ public interface NoteDao {
     @Delete
     public void DeleteNote(NoteEntity note);
 
-    @Query("SELECT * FROM Note WHERE kategori= :kategori")
-    public List<NoteEntity> getNotesByKategori(String kategori);
+    @Query("SELECT * FROM Note WHERE user= :user ORDER BY date DESC")
+    public List<NoteEntity> getNotesByUser(String user);
+
+    @Query("SELECT * FROM Note WHERE id= :id")
+    public List<NoteEntity> getNoteById(Long id);
 
 
-    @Query("SELECT distinct kategori FROM Note ")
-    public List<NoteEntity>  getKategoris();
+
+
+
+
 
 }
 
