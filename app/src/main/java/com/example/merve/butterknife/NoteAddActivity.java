@@ -83,14 +83,14 @@ public class NoteAddActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     final ColorPicker colorPicker = new ColorPicker(NoteAddActivity.this);
                     ArrayList<String> colors = new ArrayList<>();
-                    colors.add("#82B926");
-                    colors.add("#a276eb");
-                    colors.add("#6a3ab2");
-                    colors.add("#666666");
-                    colors.add("#FFFF00");
-                    colors.add("#3C8D2F");
-                    colors.add("#FA9F00");
-                    colors.add("#FF0000");
+                    colors.add("#FFCDD2");
+                    colors.add("#D1C4E9");
+                    colors.add("#B3E5FC");
+                    colors.add("#C8E6C9");
+                    colors.add("#FFE0B2");
+                    colors.add("#F9FBE7");
+                    colors.add("#F5F5F5");
+                    colors.add("#E0F2F1");
 
                     colorPicker
                             .setDefaultColorButton(Color.parseColor("#f84c44"))

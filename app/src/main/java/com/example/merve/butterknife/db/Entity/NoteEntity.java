@@ -2,12 +2,14 @@ package com.example.merve.butterknife.db.Entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by merve on 08.03.2018.
  */
 @Entity(tableName = "Note")
-public class NoteEntity {
+public class NoteEntity implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id;
@@ -15,6 +17,39 @@ public class NoteEntity {
     private String detail;
     private String user;
     private Long date;
+
+    protected NoteEntity(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        title = in.readString();
+        detail = in.readString();
+        user = in.readString();
+        if (in.readByte() == 0) {
+            date = null;
+        } else {
+            date = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            colors = null;
+        } else {
+            colors = in.readInt();
+        }
+    }
+
+    public static final Creator<NoteEntity> CREATOR = new Creator<NoteEntity>() {
+        @Override
+        public NoteEntity createFromParcel(Parcel in) {
+            return new NoteEntity(in);
+        }
+
+        @Override
+        public NoteEntity[] newArray(int size) {
+            return new NoteEntity[size];
+        }
+    };
 
     public Integer getColors() {
         return colors;
@@ -80,5 +115,35 @@ public class NoteEntity {
     public void setUser(String user) {
         this.user = user;
 
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeString(title);
+        dest.writeString(detail);
+        dest.writeString(user);
+        if (date == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(date);
+        }
+        if (colors == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(colors);
+        }
     }
 }

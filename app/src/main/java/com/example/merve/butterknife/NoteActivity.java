@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.design.widget.AppBarLayout;
@@ -38,7 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoteActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterOnCLickListener {
+public class NoteActivity extends AppCompatActivity implements AdapterOnCLickListener, View.OnClickListener, SearchView.OnQueryTextListener {
 
     final User u = new User();
 
@@ -74,7 +75,8 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_note);
         ButterKnife.bind(this);
 
-
+        searchView.setOnQueryTextListener(this);
+searchView.setOnSearchClickListener(this);
 
         rvMain.setHasFixedSize(true);
 
@@ -84,7 +86,8 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         u.setUsername(sharedPreferences.getString("username", ""));
 
-
+        mAdapter = new NoteAdapter(this);
+        rvMain.setAdapter(mAdapter);
         // inflater.inflate(R.xml.search,xml);
 
     }
@@ -105,15 +108,13 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final List<NoteEntity> list=MainActivity.database.notedao().getNotesByUser(u.getUsername());
 
-
-                final NoteAdapter adapter = new NoteAdapter(MainActivity.database.notedao().getNotesByUser(u.getUsername()),NoteActivity.this);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        rvMain.setAdapter(adapter);
-                        adapter.notifyDataSetChanged();
+                        mAdapter.setList(list);
 
 
                     }
@@ -127,37 +128,6 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent i=new Intent(NoteActivity.this,DetailActivity.class);
         startActivity(i);
     }
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        if (mCurFilter != null) {
-            baseUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI,
-                    Uri.encode(mCurFilter));
-        } else {
-            baseUri = ContactsContract.Contacts.CONTENT_URI;
-        }
-        String select = "(" + ContactsContract.Contacts.DISPLAY_NAME + "like '%'" + mCurFilter + "%'" + ")";
-        System.out.println(select);
-        return new CursorLoader(this, baseUri, CONTACTS_SUMMARY_PROJECTION, select, null,
-                ContactsContract.Contacts.DISPLAY_NAME + "ASC");
-
-    }
-
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-        if (cursorAdapter != null)
-            cursorAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        if (cursorAdapter != null)
-            cursorAdapter.swapCursor(null);
-    }
-
-
     private void commitQeury(String key) {
         Intent in = new Intent("android.intent.action.SEARCH");
         in.putExtra(SearchManager.QUERY, key);
@@ -169,14 +139,64 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-//SORUN-------------------------------------------------------------------------------->>>>>>>>>>>>>>><
     @Override
     public void onClick(View view, int position) {
         NoteEntity item= ((NoteAdapter) rvMain.getAdapter()).list.get(position);
         Intent i=new Intent(NoteActivity.this,DetailActivity.class);
-
-        i.putExtra("item",item.getId());
+        i.putExtra("item",item);
         startActivity(i);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(final String query) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                final List<NoteEntity> list= MainActivity.database.notedao().searchNote("%"+query+"%");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        mAdapter.setList(list);
+
+
+                    }
+                });
+
+
+            }
+        }).start();
+        return false;
+    }
+
+
+    @Override
+    public boolean onQueryTextChange(final String newText) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+final List<NoteEntity> list= MainActivity.database.notedao().searchNote("%"+newText+"%");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                     mAdapter.setList(list);
+
+
+                    }
+                });
+
+
+            }
+            }).start();
+        return false;
     }
 }
