@@ -33,7 +33,8 @@ public interface NoteDao {
     @Query("SELECT * FROM Note WHERE title LIKE :query OR detail LIKE :query ORDER BY date DESC")
     public List<NoteEntity> searchNote(String query);
 
-
+    @Query("SELECT COUNT(*) FROM Note")
+    public int getCount();
 
 
 

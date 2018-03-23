@@ -1,5 +1,6 @@
 package com.example.merve.butterknife;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,14 +13,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,11 +36,11 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class DetailActivity extends AppCompatActivity {
 
 
+    public int colorr = 0;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
-
     @BindView(R.id.detailDetail)
     EditText detailDetail;
     @BindView(R.id.detailEdit)
@@ -44,11 +51,14 @@ public class DetailActivity extends AppCompatActivity {
     Button detailSil;
     @BindView(R.id.btnSave2)
     Button btnSave2;
-    public int colorr = 0;
-    private SharedPreferences sharedPreferences;
+    @BindView(R.id.imgMedia)
+    ImageView imgMedia;
     String title;
-
     NoteEntity entity;
+    MediaEntity mediaEntity;
+    private SharedPreferences sharedPreferences;
+    private NoteAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +88,22 @@ public class DetailActivity extends AppCompatActivity {
 
         detailDetail.setTextColor(Color.BLACK);
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<MediaEntity> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.getId());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Picasso.get().load(new File(list.get(0).getPath())).into(imgMedia);
+                    }
+                });
+
+            }
+        }).start();
+
 
     }
 
@@ -94,7 +120,10 @@ public class DetailActivity extends AppCompatActivity {
                         entity.setDetail(detailDetail.getText().toString());
                         entity.setTitle(toolbar.getTitle().toString());
 
-                        entity.setColors(colorr);
+                        if (colorr == 0) {
+                            entity.setColors(entity.getColors());
+                        } else
+                            entity.setColors(colorr);
 
                         Calendar calendar = Calendar.getInstance();
 //
@@ -134,7 +163,16 @@ public class DetailActivity extends AppCompatActivity {
 
 
     public void onClickEdit(View view) {
+
         detailDetail.setEnabled(true);
+        detailDetail.setFocusableInTouchMode(true);
+        detailDetail.setFocusable(true);
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        detailDetail.requestFocus();
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        detailDetail.setSelection(detailDetail.getText().length(), detailDetail.getText().length());
+
     }
 
     public void onClickRenk(View view) {
@@ -229,8 +267,6 @@ public class DetailActivity extends AppCompatActivity {
 
 
     }
-
-
 
 
 }

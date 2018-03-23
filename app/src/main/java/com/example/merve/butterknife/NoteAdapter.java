@@ -1,12 +1,8 @@
 package com.example.merve.butterknife;
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,9 +24,9 @@ import butterknife.ButterKnife;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
-    List<NoteEntity> list=new ArrayList<>();
-    private AdapterOnCLickListener listener;
     public NoteAddActivity noteAddActivity;
+    List<NoteEntity> list = new ArrayList<>();
+    private AdapterOnCLickListener listener;
 
     public NoteAdapter(AdapterOnCLickListener listener) {
         this.listener = listener;
@@ -46,8 +41,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, int position) {
+
         holder.txt1.setText(list.get(position).getTitle());
+
         holder.txt2.setText(list.get(position).getDetail());
+
         if (list.get(position).getColors() == 0) {
 
             holder.txt2.setTextColor(Color.BLACK);

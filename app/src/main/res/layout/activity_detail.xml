@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,18 +24,22 @@
 
 
     <EditText
-        android:layout_margin="16dp"
         android:id="@+id/detailDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:layout_margin="16dp"
         android:ems="10"
-        android:textColor="@color/cardview_dark_background"
-        android:textColorHint="@color/cardview_dark_background"
+        android:enabled="false"
+        android:focusable="false"
+        android:hint="buraya detail "
         android:inputType="textMultiLine"
-        android:hint="buraya detail "/>
+        android:textColor="@color/cardview_dark_background"
+        android:textColorHint="@color/cardview_dark_background" />
 
-
+    <ImageView
+        android:id="@+id/imgMedia"
+        android:layout_width="300dp"
+        android:layout_height="200dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -45,11 +48,13 @@
         android:gravity="bottom"
         android:orientation="horizontal">
 
+
         <Button
             android:id="@+id/detailEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/white2"
             android:drawableTop="@drawable/ic_edit_black_24dp"
             android:onClick="onClickEdit"
             android:text="edit"
@@ -60,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/white2"
             android:drawableTop="@drawable/ic_color_lens_black_24dp"
             android:onClick="onClickRenk"
             android:text="color"
@@ -70,6 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/white2"
             android:drawableTop="@drawable/ic_delete_black_24dp"
             android:onClick="onClickSil"
             android:text="delete"
@@ -85,6 +92,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:backgroundTint="@color/gri"
+        android:padding="18dp"
         android:text="SAVE"
         android:textColor="@color/white" />
 </LinearLayout>

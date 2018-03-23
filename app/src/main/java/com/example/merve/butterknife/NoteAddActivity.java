@@ -1,15 +1,14 @@
 package com.example.merve.butterknife;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 
 import java.util.ArrayList;
@@ -30,9 +30,12 @@ import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class NoteAddActivity extends AppCompatActivity {
+    private static final int PICK_FROM_GALLERY = 1;
+    final MediaEntity mediaEntity = new MediaEntity();
+    public int colorr = 0;
+    NoteEntity noteEntity = new NoteEntity();
     String millisstring;
     int millisec = 0, sec = 0, min = 0, hour = 0;
-
     @BindView(R.id.textView2)
     TextView textView2;
     @BindView(R.id.edtTitle)
@@ -51,10 +54,8 @@ public class NoteAddActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
-
     private SharedPreferences sharedPreferences;
-    private static final int PICK_FROM_GALLERY = 1;
-    public int colorr=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +78,7 @@ public class NoteAddActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         });
-        if(btnRenk!=null){
+        if (btnRenk != null) {
             btnRenk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -100,9 +101,8 @@ public class NoteAddActivity extends AppCompatActivity {
                             .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
                                 @Override
                                 public void onChooseColor(int position, int color) {
-                                    Log.d("position", "" + position);// will be fired only when OK button was tapped
-
-                                    colorr=color;
+                                    Log.d("position", "" + position);
+                                    colorr = color;
                                 }
 
                                 @Override
@@ -114,34 +114,62 @@ public class NoteAddActivity extends AppCompatActivity {
 
             });
         }
-        if(btnMedia!=null) {
+        if (btnMedia != null) {
             btnMedia.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent,0);
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, 0);
                 }
             });
 
         }
     }
 
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            final Uri imageUri = data.getData();
+
+
+            mediaEntity.setPath(getRealPathFromURI(imageUri));
+
+
+        }
+
+    }
 
     @OnClick(R.id.btnSave)
     public void onViewClicked() {
-        if (!edtDetail.getText().toString().isEmpty() && edtDetail.getText().toString().length() < 121 && edtTitle.getText().toString().length() < 15 && !edtTitle.getText().toString().isEmpty()) {
+        if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        NoteEntity note = new NoteEntity();
-                        note.setUser(sharedPreferences.getString("username", ""));
-                        note.setTitle(edtTitle.getText().toString());
-                        note.setDetail(edtDetail.getText().toString());
+
+                        noteEntity.setUser(sharedPreferences.getString("username", ""));
+                        noteEntity.setTitle(edtTitle.getText().toString());
+                        noteEntity.setDetail(edtDetail.getText().toString());
 
 
-                        note.setColors(colorr);
+                        noteEntity.setColors(colorr);
 //                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 //                        long milliSeconds=1390361405210L;
                         Calendar calendar = Calendar.getInstance();
@@ -149,10 +177,13 @@ public class NoteAddActivity extends AppCompatActivity {
 //                        Log.d("time",formatter.format(calendar.getTime()));
 //                        System.out.println(formatter.format(date));
 
-                        note.setDate(calendar.getTimeInMillis());
+                        noteEntity.setDate(calendar.getTimeInMillis());
 
 
-                        MainActivity.database.notedao().InsertNote(note);
+                        MainActivity.database.notedao().InsertNote(noteEntity);
+                        mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
+
+                        MainActivity.database.mediaDao().InsertMedia(mediaEntity);
 
                     } catch (Exception e) {
                         Log.e("hata", e.toString());
