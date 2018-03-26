@@ -15,9 +15,7 @@
     cardview:cardCornerRadius="4dp">
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:gravity=""
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
     >
@@ -41,6 +39,14 @@
         android:text="detail"
         android:textSize="16sp"
         />
+
+    <ImageView
+        android:id="@+id/noteImg"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_gravity="right"
+        android:layout_margin="4dp"
+        android:visibility="gone" />
     <TextView
         android:id="@+id/txtDate"
         android:layout_width="match_parent"

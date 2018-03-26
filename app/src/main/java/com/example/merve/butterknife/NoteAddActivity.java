@@ -144,10 +144,9 @@ public class NoteAddActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == RESULT_OK) {
             final Uri imageUri = data.getData();
-
-
             mediaEntity.setPath(getRealPathFromURI(imageUri));
 
 
@@ -184,6 +183,7 @@ public class NoteAddActivity extends AppCompatActivity {
                         mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
 
                         MainActivity.database.mediaDao().InsertMedia(mediaEntity);
+
 
                     } catch (Exception e) {
                         Log.e("hata", e.toString());

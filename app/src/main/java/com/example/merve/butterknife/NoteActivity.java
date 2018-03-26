@@ -3,34 +3,19 @@ package com.example.merve.butterknife;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
-import com.example.merve.butterknife.db.Entity.NoteEntity;
+import com.example.merve.butterknife.db.Entity.Note;
 import com.example.merve.butterknife.model.User;
 
 import java.util.List;
@@ -41,33 +26,25 @@ import butterknife.OnClick;
 
 public class NoteActivity extends AppCompatActivity implements AdapterOnCLickListener, View.OnClickListener, SearchView.OnQueryTextListener {
 
-    final User u = new User();
-
-    CursorAdapter cursorAdapter;
-    String mCurFilter;
-    @BindView(R.id.recyclerView)
-    RecyclerView rvMain;
-
-    private NoteAdapter mAdapter;
-
-
-    @BindView(R.id.imgNoteAdd)
-    ImageButton imgNoteAdd;
-
-    @BindView(R.id.searchView)
-    SearchView searchView;
-
-
-
-    private SharedPreferences sharedPreferences;
-
     static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME,
 
     };
-    private StaggeredGridLayoutManager layoutManager;
+    final User u = new User();
+    CursorAdapter cursorAdapter;
+    String mCurFilter;
+    @BindView(R.id.recyclerView)
+    RecyclerView rvMain;
+    @BindView(R.id.imgNoteAdd)
+    ImageButton imgNoteAdd;
+    @BindView(R.id.searchView)
+    SearchView searchView;
     RecyclerView rvMain2;
+    private NoteAdapter mAdapter;
+    private MediaAdapter mAdapter2;
+    private SharedPreferences sharedPreferences;
+    private StaggeredGridLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +64,9 @@ searchView.setOnSearchClickListener(this);
         u.setUsername(sharedPreferences.getString("username", ""));
 
         mAdapter = new NoteAdapter(this);
+        mAdapter2 = new MediaAdapter(this);
         rvMain.setAdapter(mAdapter);
+        //rvMain.setAdapter(mAdapter2);
         // inflater.inflate(R.xml.search,xml);
 
     }
@@ -108,7 +87,9 @@ searchView.setOnSearchClickListener(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<NoteEntity> list=MainActivity.database.notedao().getNotesByUser(u.getUsername());
+
+                final List<Note> list = MainActivity.database.notedao().getNotesByUser(u.getUsername());
+
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -123,6 +104,7 @@ searchView.setOnSearchClickListener(this);
             }
         }).start();
     }
+
 
     public void itemOnclick(View view){
         Intent i=new Intent(NoteActivity.this,DetailActivity.class);
@@ -141,10 +123,12 @@ searchView.setOnSearchClickListener(this);
 
     @Override
     public void onClick(View view, int position) {
-        NoteEntity item= ((NoteAdapter) rvMain.getAdapter()).list.get(position);
-        Intent i=new Intent(NoteActivity.this,DetailActivity.class);
-        i.putExtra("item",item);
+
+        Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        Intent i = new Intent(NoteActivity.this, DetailActivity.class);
+        i.putExtra("item", item);
         startActivity(i);
+
 
     }
 
@@ -159,7 +143,7 @@ searchView.setOnSearchClickListener(this);
             @Override
             public void run() {
 
-                final List<NoteEntity> list= MainActivity.database.notedao().searchNote("%"+query+"%");
+                final List<Note> list = MainActivity.database.notedao().searchNote("%" + query + "%");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -183,7 +167,7 @@ searchView.setOnSearchClickListener(this);
             @Override
             public void run() {
 
-final List<NoteEntity> list= MainActivity.database.notedao().searchNote("%"+newText+"%");
+                final List<Note> list = MainActivity.database.notedao().searchNote("%" + newText + "%");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

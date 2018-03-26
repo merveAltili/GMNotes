@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
-import com.example.merve.butterknife.db.Entity.NoteEntity;
+import com.example.merve.butterknife.db.Entity.Note;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -37,6 +37,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
     public int colorr = 0;
+    public Note entity;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.appbar)
@@ -54,7 +55,6 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.imgMedia)
     ImageView imgMedia;
     String title;
-    NoteEntity entity;
     MediaEntity mediaEntity;
     private SharedPreferences sharedPreferences;
     private NoteAdapter mAdapter;
@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-            toolbar.setTitle(entity.getTitle().toString());
+            toolbar.setTitle(entity.noteEntity.getTitle());
             setSupportActionBar(toolbar);
         }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -84,20 +84,20 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        detailDetail.setText(entity.getDetail().toString());
+        detailDetail.setText(entity.noteEntity.getDetail());
 
         detailDetail.setTextColor(Color.BLACK);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<MediaEntity> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.getId());
+                final List<Note> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.noteEntity.getId());
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        Picasso.get().load(new File(list.get(0).getPath())).into(imgMedia);
+                        Picasso.get().load(new File(list.get(0).mediaAdapterList.get(0).getPath())).into(imgMedia);
                     }
                 });
 
@@ -116,21 +116,21 @@ public class DetailActivity extends AppCompatActivity {
                 public void run() {
                     try {
 
-                        entity.setUser(sharedPreferences.getString("username", ""));
-                        entity.setDetail(detailDetail.getText().toString());
-                        entity.setTitle(toolbar.getTitle().toString());
+                        entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
+                        entity.noteEntity.setDetail(detailDetail.getText().toString());
+                        entity.noteEntity.setTitle(toolbar.getTitle().toString());
 
                         if (colorr == 0) {
-                            entity.setColors(entity.getColors());
+                            entity.noteEntity.setColors(entity.noteEntity.getColors());
                         } else
-                            entity.setColors(colorr);
+                            entity.noteEntity.setColors(colorr);
 
                         Calendar calendar = Calendar.getInstance();
 //
-                        entity.setDate(calendar.getTimeInMillis());
+                        entity.noteEntity.setDate(calendar.getTimeInMillis());
 
 
-                        MainActivity.database.notedao().UpdateNote(entity);
+                        MainActivity.database.notedao().UpdateNote(entity.noteEntity);
 
                     } catch (Exception e) {
                         Log.e("hata", e.toString());
@@ -219,18 +219,18 @@ public class DetailActivity extends AppCompatActivity {
                             public void run() {
                                 try {
 
-                                    entity.setUser(sharedPreferences.getString("username", ""));
-                                    entity.setDetail(detailDetail.getText().toString());
-                                    entity.setTitle(toolbar.getTitle().toString());
+                                    entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
+                                    entity.noteEntity.setDetail(detailDetail.getText().toString());
+                                    entity.noteEntity.setTitle(toolbar.getTitle().toString());
 
-                                    entity.setColors(colorr);
+                                    entity.noteEntity.setColors(colorr);
 
                                     Calendar calendar = Calendar.getInstance();
 //
-                                    entity.setDate(calendar.getTimeInMillis());
+                                    entity.noteEntity.setDate(calendar.getTimeInMillis());
 
 
-                                    MainActivity.database.notedao().DeleteNote(entity);
+                                    MainActivity.database.notedao().DeleteNote(entity.noteEntity);
 
 
                                 } catch (Exception e) {
@@ -267,6 +267,5 @@ public class DetailActivity extends AppCompatActivity {
 
 
     }
-
 
 }

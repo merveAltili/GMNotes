@@ -3,13 +3,17 @@ package com.example.merve.butterknife;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.merve.butterknife.db.Entity.NoteEntity;
+import com.example.merve.butterknife.db.Entity.Note;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +29,7 @@ import butterknife.ButterKnife;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     public NoteAddActivity noteAddActivity;
-    List<NoteEntity> list = new ArrayList<>();
+    List<Note> list = new ArrayList<>();
     private AdapterOnCLickListener listener;
 
     public NoteAdapter(AdapterOnCLickListener listener) {
@@ -42,22 +46,33 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, int position) {
 
-        holder.txt1.setText(list.get(position).getTitle());
+        holder.txt1.setText(list.get(position).noteEntity.getTitle());
 
-        holder.txt2.setText(list.get(position).getDetail());
+        holder.txt2.setText(list.get(position).noteEntity.getDetail());
 
-        if (list.get(position).getColors() == 0) {
+        if (list.get(position).noteEntity.getColors() == 0) {
 
             holder.txt2.setTextColor(Color.BLACK);
             holder.crdview.setCardBackgroundColor(Color.WHITE);
         } else
-            holder.crdview.setCardBackgroundColor(list.get(position).getColors());
+            holder.crdview.setCardBackgroundColor(list.get(position).noteEntity.getColors());
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm");
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(list.get(position).getDate());
+        calendar.setTimeInMillis(list.get(position).noteEntity.getDate());
         String date = formatter.format(calendar.getTime());
         holder.txt3.setText(date);
 
+        try {
+            if (!list.get(position).mediaAdapterList.get(0).getPath().equals(null)) {
+                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).into(holder.noteImg);
+
+                holder.noteImg.setVisibility(View.VISIBLE);
+            } else {
+                holder.noteImg.setVisibility(View.GONE);
+            }
+        } catch (Exception ex) {
+            Log.e("hata", ex.toString());
+        }
 
     }
 
@@ -67,7 +82,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         return list.size();
     }
 
-    public void setList(List<NoteEntity> list) {
+    public void setList(List<Note> list) {
         this.list.clear();
         this.list.addAll(list);
         notifyDataSetChanged();
@@ -80,7 +95,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         TextView txt2;
         @BindView(R.id.txtDate)
         TextView txt3;
-
+        @BindView(R.id.noteImg)
+        ImageView noteImg;
         @BindView(R.id.crdview)
         CardView crdview;
 

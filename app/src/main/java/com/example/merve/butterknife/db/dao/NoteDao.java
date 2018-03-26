@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.example.merve.butterknife.db.Entity.Note;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 
 import java.util.List;
@@ -24,14 +25,14 @@ public interface NoteDao {
     public void UpdateNote(NoteEntity note);
 
     @Query("SELECT * FROM Note WHERE user= :user ORDER BY date DESC")
-    public List<NoteEntity> getNotesByUser(String user);
+    public List<Note> getNotesByUser(String user);
 
     @Query("SELECT * FROM Note WHERE id= :id")
-    public List<NoteEntity> getNoteById(Long id);
+    public List<Note> getNoteById(Long id);
 
 
     @Query("SELECT * FROM Note WHERE title LIKE :query OR detail LIKE :query ORDER BY date DESC")
-    public List<NoteEntity> searchNote(String query);
+    public List<Note> searchNote(String query);
 
     @Query("SELECT COUNT(*) FROM Note")
     public int getCount();

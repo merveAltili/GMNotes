@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
+import com.example.merve.butterknife.db.Entity.Note;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface MediaDao {
     public void DeleteMedia(MediaEntity media);
 
     @Query("SELECT * FROM Media WHERE NoteId= :NoteId")
-    public List<MediaEntity> getMediaByNoteId(Long NoteId);
+    public List<Note> getMediaByNoteId(Long NoteId);
 
 
 }
