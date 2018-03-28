@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.merve.butterknife.db.Entity.MediaEntity;
+import com.example.merve.butterknife.db.Entity.Note;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
  */
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
-    List<MediaEntity> list2 = new ArrayList<>();
+    List<Note> list2 = new ArrayList<>();
     private AdapterOnCLickListener listener;
 
     public MediaAdapter(AdapterOnCLickListener listener) {
@@ -31,20 +31,22 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
     @Override
     public MediaAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false), listener);
+        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener);
     }
 
     @Override
     public void onBindViewHolder(MediaAdapter.ViewHolder holder, int position) {
         try {
 
-            Picasso.get().load(new File(list2.get(position).getPath())).into(holder.noteImg);
+            Picasso.get().load(new File(list2.get(0).mediaAdapterList.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
+
+
         } catch (Exception ex) {
             Log.e("hata", ex.toString());
         }
     }
 
-    public void setList2(List<MediaEntity> list2) {
+    public void setList2(List<Note> list2) {
         this.list2.clear();
         this.list2.addAll(list2);
         notifyDataSetChanged();
@@ -57,8 +59,10 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.noteImg)
-        ImageView noteImg;
+
+        @BindView(R.id.imgVItem)
+        ImageView imgVItem;
+
 
 
         ViewHolder(View view, final AdapterOnCLickListener listener) {

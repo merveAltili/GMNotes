@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
@@ -36,12 +35,10 @@ public class NoteAddActivity extends AppCompatActivity {
     NoteEntity noteEntity = new NoteEntity();
     String millisstring;
     int millisec = 0, sec = 0, min = 0, hour = 0;
-    @BindView(R.id.textView2)
-    TextView textView2;
+
     @BindView(R.id.edtTitle)
     EditText edtTitle;
-    @BindView(R.id.textView3)
-    TextView textView3;
+
     @BindView(R.id.edtDetail)
     EditText edtDetail;
     @BindView(R.id.btnSave)

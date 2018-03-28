@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,53 +23,102 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:id="@+id/textView2"
+    <android.support.v7.widget.CardView
+        android:id="@+id/crdview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="Title" />
+        android:layout_height="300dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="6dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="itemOnclick2"
+        android:orientation="vertical"
+        cardview:cardCornerRadius="4dp">
 
-    <EditText
-        android:id="@+id/edtTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="Detail" />
-
-    <EditText
-        android:id="@+id/edtDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:inputType="textMultiLine" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:ems="4"
+                android:hint="Type your note"
+                android:inputType="textPersonName"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:hint="Note"
+                android:inputType="textMultiLine"
+
+                android:textSize="14dp" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        android:layout_margin="4dp">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/noteAddCardV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:onClick="itemOnclick2"
+            android:orientation="vertical"
+            cardview:cardCornerRadius="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Media" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/noteAddRecyc"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="20dp">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
         <Button
             android:id="@+id/btnRenk"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btnSave"
-            android:layout_alignParentStart="true"
-            android:layout_margin="6dp"
+            android:layout_alignBaseline="@+id/btnMedia"
+            android:layout_alignBottom="@+id/btnMedia"
+            android:layout_alignStart="@+id/noteAddCardV"
+            android:layout_marginStart="2dp"
             android:background="@color/white2"
-            android:drawableLeft="@drawable/ic_block_black_24dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="renk seç"
+            android:drawableLeft="@drawable/ic_color_lens_black_24dp"
+            android:paddingLeft="35dp"
+            android:paddingRight="35dp"
+            android:text="color "
             android:textAllCaps="false"
             android:textColor="@color/cardview_dark_background"
             android:textSize="16sp"
@@ -79,13 +129,12 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/btnSave"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="6dp"
+            android:layout_alignEnd="@+id/noteAddCardV"
             android:background="@color/white2"
             android:drawableLeft="@drawable/ic_add_black_24dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="medya ekle"
+            android:paddingLeft="35dp"
+            android:paddingRight="35dp"
+            android:text="media"
             android:textAllCaps="false"
             android:textColor="@color/cardview_dark_background"
             android:textSize="16sp"
@@ -100,7 +149,8 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            android:backgroundTint="@color/gri"
+            android:backgroundTint="@color/gray"
+            android:enabled="true"
             android:padding="18dp"
             android:text="SAVE"
             android:textColor="@color/white"

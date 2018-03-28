@@ -56,15 +56,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.crdview.setCardBackgroundColor(Color.WHITE);
         } else
             holder.crdview.setCardBackgroundColor(list.get(position).noteEntity.getColors());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(list.get(position).noteEntity.getDate());
         String date = formatter.format(calendar.getTime());
         holder.txt3.setText(date);
 
         try {
-            if (!list.get(position).mediaAdapterList.get(0).getPath().equals(null)) {
-                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).into(holder.noteImg);
+            if (list.get(position).mediaAdapterList.get(0).getPath() != null) {
+                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).centerCrop().fit().into(holder.noteImg);
 
                 holder.noteImg.setVisibility(View.VISIBLE);
             } else {

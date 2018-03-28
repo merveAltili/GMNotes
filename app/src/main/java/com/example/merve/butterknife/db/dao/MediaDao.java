@@ -24,5 +24,8 @@ public interface MediaDao {
     @Query("SELECT * FROM Media WHERE NoteId= :NoteId")
     public List<Note> getMediaByNoteId(Long NoteId);
 
+    @Query("SELECT * FROM Media WHERE NoteId=:NoteId ")
+    public List<Note> getMediaById(Long NoteId);
+
 
 }

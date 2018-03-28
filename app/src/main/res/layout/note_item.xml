@@ -11,7 +11,6 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:onClick="itemOnclick"
     android:orientation="horizontal"
-
     cardview:cardCornerRadius="4dp">
 <LinearLayout
     android:layout_width="match_parent"
@@ -43,9 +42,9 @@
     <ImageView
         android:id="@+id/noteImg"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_gravity="right"
-        android:layout_margin="4dp"
+        android:layout_marginTop="6dp"
         android:visibility="gone" />
     <TextView
         android:id="@+id/txtDate"

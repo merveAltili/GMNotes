@@ -91,13 +91,24 @@ public class DetailActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<Note> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.noteEntity.getId());
 
+
+                final List<Note> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.noteEntity.getId());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        Picasso.get().load(new File(list.get(0).mediaAdapterList.get(0).getPath())).into(imgMedia);
+                        try {
+                            if (list.get(0).mediaAdapterList.get(0).getPath() != null) {
+                                Picasso.get().load(new File(list.get(0).mediaAdapterList.get(0).getPath())).into(imgMedia);
+
+                                imgMedia.setVisibility(View.VISIBLE);
+                            } else {
+                                imgMedia.setVisibility(View.GONE);
+                            }
+                        } catch (Exception ex) {
+                            Log.e("hata", ex.toString());
+                        }
                     }
                 });
 

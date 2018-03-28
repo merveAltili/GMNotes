@@ -64,7 +64,6 @@ searchView.setOnSearchClickListener(this);
         u.setUsername(sharedPreferences.getString("username", ""));
 
         mAdapter = new NoteAdapter(this);
-        mAdapter2 = new MediaAdapter(this);
         rvMain.setAdapter(mAdapter);
         //rvMain.setAdapter(mAdapter2);
         // inflater.inflate(R.xml.search,xml);
