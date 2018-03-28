@@ -10,6 +10,9 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +22,11 @@ import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
+import com.example.merve.butterknife.model.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,15 +35,15 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class NoteAddActivity extends AppCompatActivity {
     private static final int PICK_FROM_GALLERY = 1;
-    final MediaEntity mediaEntity = new MediaEntity();
+    final User u = new User();
+    final List<MediaEntity> list2 = new ArrayList<>();
     public int colorr = 0;
+    public MediaAdapter mAdapter2;
     NoteEntity noteEntity = new NoteEntity();
     String millisstring;
     int millisec = 0, sec = 0, min = 0, hour = 0;
-
     @BindView(R.id.edtTitle)
     EditText edtTitle;
-
     @BindView(R.id.edtDetail)
     EditText edtDetail;
     @BindView(R.id.btnSave)
@@ -51,13 +56,33 @@ public class NoteAddActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
+    @BindView(R.id.crdview)
+    CardView crdview;
+    @BindView(R.id.noteAddRecyc)
+    RecyclerView noteAddRecyc;
+    @BindView(R.id.noteAddCardV)
+    CardView noteAddCardV;
     private SharedPreferences sharedPreferences;
+    private LinearLayoutManager LinearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_add);
         ButterKnife.bind(this);
+
+        noteAddRecyc.setHasFixedSize(true);
+
+        LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+
+        u.setUsername(sharedPreferences.getString("username", ""));
+        mAdapter2 = new MediaAdapter();
+        noteAddRecyc.setAdapter(mAdapter2);
+        noteAddRecyc.setLayoutManager(LinearLayoutManager);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,6 +94,8 @@ public class NoteAddActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
 
         }
+
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +127,7 @@ public class NoteAddActivity extends AppCompatActivity {
                                 public void onChooseColor(int position, int color) {
                                     Log.d("position", "" + position);
                                     colorr = color;
+                                    crdview.setCardBackgroundColor(color);
                                 }
 
                                 @Override
@@ -117,10 +145,13 @@ public class NoteAddActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, 0);
+
                 }
             });
 
         }
+
+
     }
 
     private String getRealPathFromURI(Uri contentURI) {
@@ -143,9 +174,12 @@ public class NoteAddActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
+            MediaEntity mediaEntity = new MediaEntity();
             final Uri imageUri = data.getData();
             mediaEntity.setPath(getRealPathFromURI(imageUri));
 
+            list2.add(mediaEntity);
+            mAdapter2.setList2(list2);
 
         }
 
@@ -159,6 +193,7 @@ public class NoteAddActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
+
 
                         noteEntity.setUser(sharedPreferences.getString("username", ""));
                         noteEntity.setTitle(edtTitle.getText().toString());
@@ -177,9 +212,13 @@ public class NoteAddActivity extends AppCompatActivity {
 
 
                         MainActivity.database.notedao().InsertNote(noteEntity);
-                        mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
+                        for (MediaEntity mediaEntity : list2) {
+                            mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
 
-                        MainActivity.database.mediaDao().InsertMedia(mediaEntity);
+                            MainActivity.database.mediaDao().InsertMedia(mediaEntity);
+                        }
+
+
 
 
                     } catch (Exception e) {

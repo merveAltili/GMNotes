@@ -3,7 +3,6 @@ package com.example.merve.butterknife;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.merve.butterknife.db.Entity.Note;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +29,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     List<Note> list = new ArrayList<>();
     private AdapterOnCLickListener listener;
 
+
     public NoteAdapter(AdapterOnCLickListener listener) {
         this.listener = listener;
     }
@@ -45,6 +43,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, int position) {
+        MediaAdapter mediaAdapter = new MediaAdapter();
+        holder.recyclerViewImageItem.setAdapter(mediaAdapter);
+        mediaAdapter.setList2(list.get(position).mediaAdapterList);
+
 
         holder.txt1.setText(list.get(position).noteEntity.getTitle());
 
@@ -62,17 +64,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         String date = formatter.format(calendar.getTime());
         holder.txt3.setText(date);
 
-        try {
-            if (list.get(position).mediaAdapterList.get(0).getPath() != null) {
-                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).centerCrop().fit().into(holder.noteImg);
-
-                holder.noteImg.setVisibility(View.VISIBLE);
-            } else {
-                holder.noteImg.setVisibility(View.GONE);
-            }
-        } catch (Exception ex) {
-            Log.e("hata", ex.toString());
-        }
+//        try {
+//            if (list.get(position).mediaAdapterList.get(0).getPath() != null) {
+//                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).fit().into(holder.noteImg);
+//
+//                holder.noteImg.setVisibility(View.VISIBLE);
+//            } else {
+//                holder.noteImg.setVisibility(View.GONE);
+//            }
+//        } catch (Exception ex) {
+//            Log.e("hata", ex.toString());
+//        }
 
     }
 
@@ -99,6 +101,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         ImageView noteImg;
         @BindView(R.id.crdview)
         CardView crdview;
+        @BindView(R.id.recyclerViewImageItem)
+        RecyclerView recyclerViewImageItem;
 
         ViewHolder(View view, final AdapterOnCLickListener listener) {
 

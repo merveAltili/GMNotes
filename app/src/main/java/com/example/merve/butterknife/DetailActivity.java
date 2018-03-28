@@ -10,23 +10,22 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.Note;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,29 +51,42 @@ public class DetailActivity extends AppCompatActivity {
     Button detailSil;
     @BindView(R.id.btnSave2)
     Button btnSave2;
-    @BindView(R.id.imgMedia)
-    ImageView imgMedia;
+
     String title;
-    MediaEntity mediaEntity;
+    @BindView(R.id.detailText)
+    EditText detailText;
+    @BindView(R.id.crdview)
+    CardView crdview;
+    @BindView(R.id.txtView)
+    TextView txtView;
+    @BindView(R.id.noteAddRecyc2)
+    RecyclerView noteAddRecyc2;
+    @BindView(R.id.noteAddCardV2)
+    CardView noteAddCardV2;
+    MediaEntity mediaEntity = new MediaEntity();
     private SharedPreferences sharedPreferences;
-    private NoteAdapter mAdapter;
+    private MediaAdapter mAdapter = new MediaAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-
+        noteAddRecyc2.setAdapter(mAdapter);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         Bundle bundle = getIntent().getExtras();
         entity = bundle.getParcelable("item");
+
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-            toolbar.setTitle(entity.noteEntity.getTitle());
+            toolbar.setTitle("Detail");
             setSupportActionBar(toolbar);
         }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -87,33 +99,11 @@ public class DetailActivity extends AppCompatActivity {
         detailDetail.setText(entity.noteEntity.getDetail());
 
         detailDetail.setTextColor(Color.BLACK);
+        crdview.setCardBackgroundColor(entity.noteEntity.getColors());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        detailText.setText(entity.noteEntity.getTitle());
 
-
-                final List<Note> list = MainActivity.database.mediaDao().getMediaByNoteId(entity.noteEntity.getId());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-                            if (list.get(0).mediaAdapterList.get(0).getPath() != null) {
-                                Picasso.get().load(new File(list.get(0).mediaAdapterList.get(0).getPath())).into(imgMedia);
-
-                                imgMedia.setVisibility(View.VISIBLE);
-                            } else {
-                                imgMedia.setVisibility(View.GONE);
-                            }
-                        } catch (Exception ex) {
-                            Log.e("hata", ex.toString());
-                        }
-                    }
-                });
-
-            }
-        }).start();
+        mAdapter.setList2(entity.mediaAdapterList);
 
 
     }

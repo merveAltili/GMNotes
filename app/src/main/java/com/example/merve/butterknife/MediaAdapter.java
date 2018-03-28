@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.merve.butterknife.db.Entity.Note;
+import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -22,23 +22,18 @@ import butterknife.ButterKnife;
  */
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
-    List<Note> list2 = new ArrayList<>();
-    private AdapterOnCLickListener listener;
-
-    public MediaAdapter(AdapterOnCLickListener listener) {
-        this.listener = listener;
-    }
+    List<MediaEntity> list2 = new ArrayList<>();
 
     @Override
     public MediaAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener);
+        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(MediaAdapter.ViewHolder holder, int position) {
         try {
 
-            Picasso.get().load(new File(list2.get(0).mediaAdapterList.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
+            Picasso.get().load(new File(list2.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
 
 
         } catch (Exception ex) {
@@ -46,7 +41,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         }
     }
 
-    public void setList2(List<Note> list2) {
+    public void setList2(List<MediaEntity> list2) {
         this.list2.clear();
         this.list2.addAll(list2);
         notifyDataSetChanged();
@@ -64,18 +59,12 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         ImageView imgVItem;
 
 
-
-        ViewHolder(View view, final AdapterOnCLickListener listener) {
+        ViewHolder(View view) {
 
             super(view);
 
             ButterKnife.bind(this, view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onClick(v, getAdapterPosition());
-                }
-            });
+
 
         }
     }
