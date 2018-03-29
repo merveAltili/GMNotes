@@ -14,10 +14,13 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
@@ -62,8 +65,27 @@ public class NoteAddActivity extends AppCompatActivity {
     RecyclerView noteAddRecyc;
     @BindView(R.id.noteAddCardV)
     CardView noteAddCardV;
+    @BindView(R.id.txtView)
+    TextView txtView;
     private SharedPreferences sharedPreferences;
     private LinearLayoutManager LinearLayoutManager;
+    private TextWatcher tw = new TextWatcher() {
+        public void afterTextChanged(Editable s) {
+            if (!edtTitle.getText().toString().isEmpty() && !edtDetail.getText().toString().isEmpty())
+                btnSave.setVisibility(View.VISIBLE);
+            else
+                btnSave.setVisibility(View.GONE);
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            // you can check for enter key here
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,25 +138,48 @@ public class NoteAddActivity extends AppCompatActivity {
                     colors.add("#F9FBE7");
                     colors.add("#F5F5F5");
                     colors.add("#E0F2F1");
-
+                    colorPicker.disableDefaultButtons(true);
+                    Button buton = new Button(getApplicationContext());
+                    buton.setTextColor(Color.BLUE);
+                    buton.setBackgroundColor(Color.WHITE);
+                    Button buton2 = new Button(getApplicationContext());
+                    buton2.setBackgroundColor(Color.WHITE);
+                    Button buton3 = new Button(getApplicationContext());
+                    buton3.setBackgroundColor(Color.WHITE);
                     colorPicker
+                            .setColorButtonTickColor(Color.WHITE)
                             .setDefaultColorButton(Color.parseColor("#f84c44"))
                             .setColors(colors)
                             .setColumns(5)
                             .setRoundColorButton(true)
-                            .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+                            .addListenerButton("", buton3, new ColorPicker.OnButtonListener() {
                                 @Override
-                                public void onChooseColor(int position, int color) {
+                                public void onClick(View v, int position, int color) {
+
+
+                                }
+                            })
+                            .addListenerButton("Cancel", buton2, new ColorPicker.OnButtonListener() {
+                                @Override
+                                public void onClick(View v, int position, int color) {
+
+                                    colorPicker.dismissDialog();
+
+                                }
+                            })
+
+                            .addListenerButton("OK", buton, new ColorPicker.OnButtonListener() {
+                                @Override
+                                public void onClick(View v, int position, int color) {
                                     Log.d("position", "" + position);
                                     colorr = color;
                                     crdview.setCardBackgroundColor(color);
+                                    noteAddCardV.setCardBackgroundColor(color);
+                                    noteAddRecyc.setBackgroundColor(color);
+                                    colorPicker.dismissDialog();
                                 }
-
-                                @Override
-                                public void onCancel() {
-
-                                }
-                            }).show();
+                            })
+                            .show();
                 }
 
             });
@@ -150,7 +195,8 @@ public class NoteAddActivity extends AppCompatActivity {
             });
 
         }
-
+        edtDetail.addTextChangedListener(tw);
+        edtTitle.addTextChangedListener(tw);
 
     }
 
@@ -219,8 +265,6 @@ public class NoteAddActivity extends AppCompatActivity {
                         }
 
 
-
-
                     } catch (Exception e) {
                         Log.e("hata", e.toString());
                     }
@@ -246,8 +290,10 @@ public class NoteAddActivity extends AppCompatActivity {
             }).start();
 
 
-        } else {
-            Toast.makeText(this, "Lütfen geçerli bir değer giriniz", Toast.LENGTH_SHORT).show();
+        } else if (edtTitle.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
+        } else if (edtDetail.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
         }
     }
 

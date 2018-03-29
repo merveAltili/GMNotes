@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.example.merve.butterknife.db.Entity.Note;
@@ -41,6 +42,8 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     @BindView(R.id.searchView)
     SearchView searchView;
     RecyclerView rvMain2;
+    @BindView(R.id.search)
+    LinearLayout search;
     private NoteAdapter mAdapter;
     private MediaAdapter mAdapter2;
     private SharedPreferences sharedPreferences;
@@ -53,11 +56,11 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
         ButterKnife.bind(this);
 
         searchView.setOnQueryTextListener(this);
-searchView.setOnSearchClickListener(this);
+        searchView.setOnSearchClickListener(this);
 
         rvMain.setHasFixedSize(true);
 
-        layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvMain.setLayoutManager(layoutManager);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -105,14 +108,16 @@ searchView.setOnSearchClickListener(this);
     }
 
 
-    public void itemOnclick(View view){
-        Intent i=new Intent(NoteActivity.this,DetailActivity.class);
+    public void itemOnclick(View view) {
+        Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         startActivity(i);
     }
+
     private void commitQeury(String key) {
         Intent in = new Intent("android.intent.action.SEARCH");
         in.putExtra(SearchManager.QUERY, key);
         startActivity(in);
+        finish();
     }
 
     @Override
@@ -127,6 +132,7 @@ searchView.setOnSearchClickListener(this);
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
         startActivity(i);
+        finish();
 
 
     }
@@ -171,7 +177,7 @@ searchView.setOnSearchClickListener(this);
                     @Override
                     public void run() {
 
-                     mAdapter.setList(list);
+                        mAdapter.setList(list);
 
 
                     }
@@ -179,7 +185,7 @@ searchView.setOnSearchClickListener(this);
 
 
             }
-            }).start();
+        }).start();
         return false;
     }
 }

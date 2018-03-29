@@ -79,6 +79,7 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
+
         entity = bundle.getParcelable("item");
 
 
@@ -86,6 +87,15 @@ public class DetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(DetailActivity.this, NoteActivity.class);
+                    startActivity(i);
+                    finish();
+
+                }
+            });
             toolbar.setTitle("Detail");
             setSupportActionBar(toolbar);
         }
@@ -99,9 +109,19 @@ public class DetailActivity extends AppCompatActivity {
         detailDetail.setText(entity.noteEntity.getDetail());
 
         detailDetail.setTextColor(Color.BLACK);
-        crdview.setCardBackgroundColor(entity.noteEntity.getColors());
+        if (entity.noteEntity.getColors() == 0) {
+            crdview.setCardBackgroundColor(Color.WHITE);
+            noteAddCardV2.setCardBackgroundColor(Color.WHITE);
+            noteAddRecyc2.setBackgroundColor(Color.WHITE);
+        } else {
+            crdview.setCardBackgroundColor(entity.noteEntity.getColors());
+            noteAddCardV2.setCardBackgroundColor(entity.noteEntity.getColors());
+            noteAddRecyc2.setBackgroundColor(entity.noteEntity.getColors());
+        }
+
 
         detailText.setText(entity.noteEntity.getTitle());
+
 
         mAdapter.setList2(entity.mediaAdapterList);
 
@@ -119,7 +139,7 @@ public class DetailActivity extends AppCompatActivity {
 
                         entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
                         entity.noteEntity.setDetail(detailDetail.getText().toString());
-                        entity.noteEntity.setTitle(toolbar.getTitle().toString());
+                        entity.noteEntity.setTitle(detailText.getText().toString());
 
                         if (colorr == 0) {
                             entity.noteEntity.setColors(entity.noteEntity.getColors());
@@ -145,6 +165,7 @@ public class DetailActivity extends AppCompatActivity {
                                 Intent i = new Intent(getApplicationContext(), NoteActivity.class);
                                 i.putExtra("detail", detailDetail.getText());
                                 startActivity(i);
+                                finish();
                             } catch (Exception e) {
 
                                 Log.e("hata", e.toString());
@@ -168,11 +189,14 @@ public class DetailActivity extends AppCompatActivity {
         detailDetail.setEnabled(true);
         detailDetail.setFocusableInTouchMode(true);
         detailDetail.setFocusable(true);
+        detailText.setEnabled(true);
+        detailText.setFocusableInTouchMode(true);
+        detailText.setFocusable(true);
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        detailDetail.requestFocus();
+        detailText.requestFocus();
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        detailDetail.setSelection(detailDetail.getText().length(), detailDetail.getText().length());
+        detailText.setSelection(detailText.getText().length(), detailText.getText().length());
 
     }
 
@@ -199,6 +223,8 @@ public class DetailActivity extends AppCompatActivity {
                     public void onChooseColor(int position, int color) {
                         Log.d("position", "" + position);// will be fired only when OK button was tapped
                         colorr = color;
+                        crdview.setCardBackgroundColor(color);
+                        noteAddRecyc2.setBackgroundColor(color);
                     }
 
                     @Override
@@ -222,7 +248,7 @@ public class DetailActivity extends AppCompatActivity {
 
                                     entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
                                     entity.noteEntity.setDetail(detailDetail.getText().toString());
-                                    entity.noteEntity.setTitle(toolbar.getTitle().toString());
+                                    entity.noteEntity.setTitle(detailText.getText().toString());
 
                                     entity.noteEntity.setColors(colorr);
 
@@ -246,6 +272,7 @@ public class DetailActivity extends AppCompatActivity {
                                             Intent i = new Intent(getApplicationContext(), NoteActivity.class);
                                             i.putExtra("detail", detailDetail.getText());
                                             startActivity(i);
+                                            finish();
                                         } catch (Exception e) {
 
                                             Log.e("hata", e.toString());

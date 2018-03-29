@@ -35,6 +35,13 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
             Picasso.get().load(new File(list2.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
 
+//            holder.imgVItem.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    v.getContext().startActivity(new Intent(v.getContext(),DetailActivity.class));
+//                }
+//            });
+
 
         } catch (Exception ex) {
             Log.e("hata", ex.toString());
