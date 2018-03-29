@@ -64,6 +64,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.crdview.setCardBackgroundColor(list.get(position).noteEntity.getColors());
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         Calendar calendar = Calendar.getInstance();
+
         calendar.setTimeInMillis(list.get(position).noteEntity.getDate());
         String date = formatter.format(calendar.getTime());
         holder.txt3.setText(date);
