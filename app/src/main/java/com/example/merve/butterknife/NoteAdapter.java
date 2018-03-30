@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.Note;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     public NoteAddActivity noteAddActivity;
     List<Note> list = new ArrayList<>();
+    List<MediaEntity> list2 = new ArrayList<>();
     private AdapterOnCLickListener listener;
     private StaggeredGridLayoutManager layoutManager;
 
@@ -44,7 +46,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
 
     @Override
-    public void onBindViewHolder(NoteAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(NoteAdapter.ViewHolder holder, final int position) {
         MediaAdapter mediaAdapter = new MediaAdapter();
         holder.recyclerViewImageItem.setAdapter(mediaAdapter);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
@@ -72,21 +74,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         holder.recyclerViewImageItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.getContext().startActivity(new Intent(v.getContext(), DetailActivity.class));
+                Intent i = new Intent(v.getContext(), DetailActivity.class);
+                i.putExtra("item", list.get(position));
+                v.getContext().startActivity(i);
             }
         });
-
-//        try {
-//            if (list.get(position).mediaAdapterList.get(0).getPath() != null) {
-//                Picasso.get().load(new File(list.get(position).mediaAdapterList.get(0).getPath())).fit().into(holder.noteImg);
-//
-//                holder.noteImg.setVisibility(View.VISIBLE);
-//            } else {
-//                holder.noteImg.setVisibility(View.GONE);
-//            }
-//        } catch (Exception ex) {
-//            Log.e("hata", ex.toString());
-//        }
 
     }
 

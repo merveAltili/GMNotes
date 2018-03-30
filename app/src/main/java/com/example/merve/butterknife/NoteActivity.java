@@ -110,6 +110,7 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
     public void itemOnclick(View view) {
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
+
         startActivity(i);
     }
 
@@ -117,7 +118,6 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
         Intent in = new Intent("android.intent.action.SEARCH");
         in.putExtra(SearchManager.QUERY, key);
         startActivity(in);
-        finish();
     }
 
     @Override
@@ -132,7 +132,6 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
         startActivity(i);
-        finish();
 
 
     }

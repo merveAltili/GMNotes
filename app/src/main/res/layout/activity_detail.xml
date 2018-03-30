@@ -99,7 +99,8 @@
             android:id="@+id/txtView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="8dp"
             android:text="Media" />
 
         <LinearLayout
@@ -111,9 +112,9 @@
                 android:id="@+id/noteAddRecyc2"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="30dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 app:layoutManager="LinearLayoutManager"

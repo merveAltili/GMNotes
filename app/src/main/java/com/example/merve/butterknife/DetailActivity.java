@@ -26,6 +26,7 @@ import com.example.merve.butterknife.db.Entity.Note;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,7 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class DetailActivity extends AppCompatActivity {
 
 
+    final List<MediaEntity> list2 = new ArrayList<>();
     public int colorr = 0;
     public Note entity;
     @BindView(R.id.toolbar)
@@ -51,7 +53,6 @@ public class DetailActivity extends AppCompatActivity {
     Button detailSil;
     @BindView(R.id.btnSave2)
     Button btnSave2;
-
     String title;
     @BindView(R.id.detailText)
     EditText detailText;
@@ -181,6 +182,7 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Lütfen geçerli bir değer giriniz", Toast.LENGTH_SHORT).show();
         }
+
     }
 
 

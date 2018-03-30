@@ -1,10 +1,12 @@
 package com.example.merve.butterknife;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
@@ -24,28 +26,57 @@ import butterknife.ButterKnife;
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
     List<MediaEntity> list2 = new ArrayList<>();
 
+    private AdapterOnCLickListener listener;
+
+//    public MediaAdapter(List<MediaEntity> list2) {
+//        this.list2 = list2;
+//    }
+
     @Override
     public MediaAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false));
+        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener);
     }
 
     @Override
-    public void onBindViewHolder(MediaAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final MediaAdapter.ViewHolder holder, final int position) {
         try {
 
             Picasso.get().load(new File(list2.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
+            holder.imgVItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-//            holder.imgVItem.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    v.getContext().startActivity(new Intent(v.getContext(),DetailActivity.class));
-//                }
-//            });
+                    Intent i = new Intent(v.getContext(), DetailActivity.class);
+                    i.putExtra("item", list2.get(position));
+                    v.getContext().startActivity(i);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainActivity.database.notedao().getNoteById(list2.get(position).getNoteId());
+
+                        }
+                    }).start();
+                }
+            });
+            holder.imgVItem.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainActivity.database.mediaDao().DeleteMedia(list2.get(position));
+
+                        }
+                    }).start();
+                    return true;
+                }
+            });
 
 
         } catch (Exception ex) {
             Log.e("hata", ex.toString());
         }
+
     }
 
     public void setList2(List<MediaEntity> list2) {
@@ -65,13 +96,21 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         @BindView(R.id.imgVItem)
         ImageView imgVItem;
 
+        @BindView(R.id.imgbtnClose)
+        ImageButton imgbtnClose;
 
-        ViewHolder(View view) {
+
+        ViewHolder(View view, final AdapterOnCLickListener listener) {
 
             super(view);
 
             ButterKnife.bind(this, view);
-
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClick(v, getAdapterPosition());
+                }
+            });
 
         }
     }
