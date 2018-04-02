@@ -1,10 +1,13 @@
 package com.example.merve.butterknife;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +50,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, final int position) {
-        MediaAdapter mediaAdapter = new MediaAdapter();
+        final MediaAdapter mediaAdapter = new MediaAdapter();
         holder.recyclerViewImageItem.setAdapter(mediaAdapter);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         holder.recyclerViewImageItem.setLayoutManager(layoutManager);
@@ -79,7 +82,47 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 v.getContext().startActivity(i);
             }
         });
+        holder.crdview.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View v) {
 
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Delete")
+                        .setMessage("Are you want to delete ?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+
+                                            MainActivity.database.notedao().DeleteNote(list.get(position).noteEntity);
+
+//                                            NoteAdapter.this.notifyDataSetChanged();
+
+
+                                        } catch (Exception e) {
+                                            Log.e("hata", e.toString());
+                                        }
+
+
+                                    }
+                                }).start();
+
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
+
+
+                return true;
+            }
+        });
     }
 
 

@@ -65,6 +65,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.noteAddCardV2)
     CardView noteAddCardV2;
     MediaEntity mediaEntity = new MediaEntity();
+    List<Note> list = new ArrayList<Note>();
     private SharedPreferences sharedPreferences;
     private MediaAdapter mAdapter = new MediaAdapter();
 
@@ -74,10 +75,10 @@ public class DetailActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-        noteAddRecyc2.setAdapter(mAdapter);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        noteAddRecyc2.setAdapter(mAdapter);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -125,6 +126,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
         mAdapter.setList2(entity.mediaAdapterList);
+
 
 
     }
@@ -187,7 +189,8 @@ public class DetailActivity extends AppCompatActivity {
 
 
     public void onClickEdit(View view) {
-
+        mAdapter.asd();
+        noteAddRecyc2.setAdapter(mAdapter);
         detailDetail.setEnabled(true);
         detailDetail.setFocusableInTouchMode(true);
         detailDetail.setFocusable(true);
@@ -199,6 +202,7 @@ public class DetailActivity extends AppCompatActivity {
         detailText.requestFocus();
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         detailText.setSelection(detailText.getText().length(), detailText.getText().length());
+
 
     }
 
@@ -227,6 +231,7 @@ public class DetailActivity extends AppCompatActivity {
                         colorr = color;
                         crdview.setCardBackgroundColor(color);
                         noteAddRecyc2.setBackgroundColor(color);
+                        noteAddCardV2.setBackgroundColor(color);
                     }
 
                     @Override

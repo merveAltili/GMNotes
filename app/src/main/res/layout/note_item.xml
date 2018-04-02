@@ -53,6 +53,8 @@
         android:id="@+id/recyclerViewImageItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clickable="true"
         android:orientation="horizontal"
         cardview:layoutManager="LinearLayoutManager"
         cardview:spanCount="1" />

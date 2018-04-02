@@ -21,19 +21,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 import com.example.merve.butterknife.model.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class NoteAddActivity extends AppCompatActivity {
@@ -49,8 +46,6 @@ public class NoteAddActivity extends AppCompatActivity {
     EditText edtTitle;
     @BindView(R.id.edtDetail)
     EditText edtDetail;
-    @BindView(R.id.btnSave)
-    Button btnSave;
     @BindView(R.id.btnRenk)
     Button btnRenk;
     @BindView(R.id.btnMedia)
@@ -67,14 +62,16 @@ public class NoteAddActivity extends AppCompatActivity {
     CardView noteAddCardV;
     @BindView(R.id.txtView)
     TextView txtView;
+    @BindView(R.id.txtMediaNote)
+    TextView txtMediaNote;
     private SharedPreferences sharedPreferences;
     private LinearLayoutManager LinearLayoutManager;
     private TextWatcher tw = new TextWatcher() {
         public void afterTextChanged(Editable s) {
-            if (!edtTitle.getText().toString().isEmpty() && !edtDetail.getText().toString().isEmpty())
-                btnSave.setVisibility(View.VISIBLE);
-            else
-                btnSave.setVisibility(View.GONE);
+//            if (!edtTitle.getText().toString().isEmpty() && !edtDetail.getText().toString().isEmpty())
+//                btnSave.setVisibility(View.VISIBLE);
+//            else
+//                btnSave.setVisibility(View.GONE);
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -111,8 +108,8 @@ public class NoteAddActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-            toolbar.setTitle("New Note");
+            toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+//            toolbar.setIc(R.drawable.ic_check_white);
             setSupportActionBar(toolbar);
 
         }
@@ -226,76 +223,79 @@ public class NoteAddActivity extends AppCompatActivity {
 
             list2.add(mediaEntity);
             mAdapter2.setList2(list2);
+            txtMediaNote.setVisibility(View.GONE);
+            noteAddCardV.setVisibility(View.VISIBLE);
 
         }
 
     }
 
-    @OnClick(R.id.btnSave)
-    public void onViewClicked() {
-        if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-
-                        noteEntity.setUser(sharedPreferences.getString("username", ""));
-                        noteEntity.setTitle(edtTitle.getText().toString());
-                        noteEntity.setDetail(edtDetail.getText().toString());
-
-
-                        noteEntity.setColors(colorr);
-//                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//                        long milliSeconds=1390361405210L;
-                        Calendar calendar = Calendar.getInstance();
-//                        calendar.setTimeInMillis(milliSeconds);
-//                        Log.d("time",formatter.format(calendar.getTime()));
-//                        System.out.println(formatter.format(date));
-
-                        noteEntity.setDate(calendar.getTimeInMillis());
-
-
-                        MainActivity.database.notedao().InsertNote(noteEntity);
-                        for (MediaEntity mediaEntity : list2) {
-                            mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
-
-                            MainActivity.database.mediaDao().InsertMedia(mediaEntity);
-                        }
-
-
-                    } catch (Exception e) {
-                        Log.e("hata", e.toString());
-                    }
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                Intent i = new Intent(getApplicationContext(), NoteActivity.class);
-                                i.putExtra("detail", edtDetail.getText());
-                                i.putExtra("title", edtTitle.getText());
-                                startActivity(i);
-                            } catch (Exception e) {
-
-                                Log.e("hata", e.toString());
-                            }
-
-                        }
-                    });
-
-                }
-            }).start();
-
-
-        } else if (edtTitle.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
-        } else if (edtDetail.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @OnClick(R.id.btnSave)
+//    public void onViewClicked() {
+//        if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
+//
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//
+//
+//                        noteEntity.setUser(sharedPreferences.getString("username", ""));
+//                        noteEntity.setTitle(edtTitle.getText().toString());
+//                        noteEntity.setDetail(edtDetail.getText().toString());
+//
+//
+//                        noteEntity.setColors(colorr);
+////                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+////                        long milliSeconds=1390361405210L;
+//                        Calendar calendar = Calendar.getInstance();
+////                        calendar.setTimeInMillis(milliSeconds);
+////                        Log.d("time",formatter.format(calendar.getTime()));
+////                        System.out.println(formatter.format(date));
+//
+//                        noteEntity.setDate(calendar.getTimeInMillis());
+//
+//
+//                        MainActivity.database.notedao().InsertNote(noteEntity);
+//                        for (MediaEntity mediaEntity : list2) {
+//                            mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
+//
+//                            MainActivity.database.mediaDao().InsertMedia(mediaEntity);
+//                        }
+//
+//
+//                    } catch (Exception e) {
+//                        Log.e("hata", e.toString());
+//                    }
+//
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                Intent i = new Intent(getApplicationContext(), NoteActivity.class);
+//                                i.putExtra("detail", edtDetail.getText());
+//                                i.putExtra("title", edtTitle.getText());
+//                                startActivity(i);
+//                                finish();
+//                            } catch (Exception e) {
+//
+//                                Log.e("hata", e.toString());
+//                            }
+//
+//                        }
+//                    });
+//
+//                }
+//            }).start();
+//
+//
+//        } else if (edtTitle.getText().toString().isEmpty()) {
+//            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
+//        } else if (edtDetail.getText().toString().isEmpty()) {
+//            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
 
 }

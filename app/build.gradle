@@ -61,6 +61,8 @@ dependencies {
     //zoom
     compile 'com.vatsal.imagezoomer:image-zoomer:1.0.2'
 
+    //msayankütüphaneResim görüntüleme
+    compile 'com.github.msayan:PhotoViewer:v1.0.2'
 
 
 
