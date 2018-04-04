@@ -299,6 +299,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                         Long id = database.notedao().getLastNote().getId();
                         database.mediaDao().deleteMediasByNoteId(id);
                         for (MediaEntity mediaEntity : mediaEntities) {
+
                             mediaEntity.setNoteId(id);
                             database.mediaDao().InsertMedia(mediaEntity);
                         }
