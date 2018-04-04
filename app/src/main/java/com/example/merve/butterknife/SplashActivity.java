@@ -35,6 +35,9 @@ public class SplashActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
             permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            permissionList.add(Manifest.permission.CAMERA);
+
         if (!permissionList.isEmpty())
             ActivityCompat.requestPermissions(this, permissionList.toArray(new String[permissionList.size()]), REQ_CODE);
         else

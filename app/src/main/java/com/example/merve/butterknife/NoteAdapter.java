@@ -1,20 +1,17 @@
 package com.example.merve.butterknife;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.merve.butterknife.db.Entity.MediaEntity;
+import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.Note;
 
 import java.text.SimpleDateFormat;
@@ -30,10 +27,9 @@ import butterknife.ButterKnife;
  */
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-
     public NoteAddActivity noteAddActivity;
     List<Note> list = new ArrayList<>();
-    List<MediaEntity> list2 = new ArrayList<>();
+    private AppDatabase database;
     private AdapterOnCLickListener listener;
     private StaggeredGridLayoutManager layoutManager;
 
@@ -50,7 +46,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, final int position) {
-        final MediaAdapter mediaAdapter = new MediaAdapter();
+        final MediaAdapter mediaAdapter = new MediaAdapter(listener);
         holder.recyclerViewImageItem.setAdapter(mediaAdapter);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         holder.recyclerViewImageItem.setLayoutManager(layoutManager);
@@ -82,47 +78,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 v.getContext().startActivity(i);
             }
         });
-        holder.crdview.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(final View v) {
 
-                new AlertDialog.Builder(v.getContext())
-                        .setTitle("Delete")
-                        .setMessage("Are you want to delete ?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-
-                                            MainActivity.database.notedao().DeleteNote(list.get(position).noteEntity);
-
-//                                            NoteAdapter.this.notifyDataSetChanged();
-
-
-                                        } catch (Exception e) {
-                                            Log.e("hata", e.toString());
-                                        }
-
-
-                                    }
-                                }).start();
-
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).show();
-
-
-                return true;
-            }
-        });
     }
 
 
@@ -161,6 +117,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     listener.onClick(v, getAdapterPosition());
+                }
+            });
+            crdview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClickCardView(v, getAdapterPosition());
+                }
+            });
+
+            crdview.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(final View v) {
+
+                    listener.onLongClick(v, getAdapterPosition());
+                    return true;
                 }
             });
 

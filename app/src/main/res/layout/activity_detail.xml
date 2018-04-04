@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#dddddd"
-    android:orientation="vertical"
     tools:context="com.example.merve.butterknife.NoteAddActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -22,167 +21,186 @@
             android:background="@color/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay">
 
+            <ImageButton
+                android:id="@+id/submitEditNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:layout_margin="16dp"
+                android:background="@null"
+                android:backgroundTint="@null"
+                android:clickable="false"
+                android:saveEnabled="false"
+                android:src="@drawable/ic_check_white" />
+
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/crdview"
+    <LinearLayout
+        android:id="@+id/rv_content"
         android:layout_width="match_parent"
-        android:layout_height="290dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="6dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:orientation="vertical"
-        cardview:cardCornerRadius="4dp">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appbar"
+        android:layout_marginBottom="80dp"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/crdview2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="7"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="16dp">
+            cardview:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
 
 
-            <EditText
-                android:id="@+id/detailText"
+                <EditText
+                    android:id="@+id/detailText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@null"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="type your note"
+                    android:inputType="text"
+                    android:textColor="@color/cardview_dark_background"
+                    android:textColorHint="@color/cardview_dark_background"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/detailDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@null"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:gravity="top"
+                    android:hint="note "
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/cardview_dark_background"
+                    android:textColorHint="@color/cardview_dark_background"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/noteAddCardV2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/crdview2"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="3"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:visibility="visible"
+            cardview:cardCornerRadius="4dp">
+
+
+            <TextView
+                android:id="@+id/txtView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
-                android:background="@null"
-                android:ems="10"
-                android:enabled="false"
-                android:focusable="false"
-                android:hint="type your note"
-                android:inputType="text"
-                android:textColor="@color/cardview_dark_background"
-                android:textColorHint="@color/cardview_dark_background"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="Media" />
 
-            <EditText
-                android:id="@+id/detailDetail"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="16dp"
-                android:background="@null"
-                android:ems="10"
-                android:enabled="false"
-                android:focusable="false"
-                android:gravity="top"
-                android:hint="note "
-                android:inputType="textMultiLine"
-                android:textColor="@color/cardview_dark_background"
-                android:textColorHint="@color/cardview_dark_background"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:layout_height="110dp"
+                android:orientation="horizontal">
 
-    </android.support.v7.widget.CardView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/noteAddRecyc2"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="28dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="LinearLayoutManager"
+                    app:spanCount="4">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/noteAddCardV2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="6dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:orientation="vertical"
-        cardview:cardCornerRadius="4dp">
-
-        <TextView
-            android:id="@+id/txtView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="8dp"
-            android:text="Media" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="95dp"
-            android:orientation="horizontal">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/noteAddRecyc2"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="30dp"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                app:layoutManager="LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/txtView"
-                app:spanCount="4">
-
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_weight="1"
-        android:gravity="bottom"
-        android:orientation="horizontal">
-
-
-        <Button
-            android:id="@+id/detailEdit"
-            android:layout_width="5dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/white2"
-            android:drawableTop="@drawable/ic_edit_black_24dp"
-            android:onClick="onClickEdit"
-            android:text="edit"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/detailColor"
-            android:layout_width="10dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/white2"
-            android:drawableTop="@drawable/ic_color_lens_black_24dp"
-            android:onClick="onClickRenk"
-            android:text="color"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/detailSil"
-            android:layout_width="10dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/white2"
-            android:drawableTop="@drawable/ic_delete_black_24dp"
-            android:onClick="onClickSil"
-            android:text="delete"
-
-            android:textAllCaps="false" />
-
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnSave2"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:padding="18dp"
-        android:text="SAVE"
-        android:textColor="@color/white" />
-</LinearLayout>
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:weightSum="3">
+
+
+        <Button
+            android:id="@+id/detailColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@color/white2"
+            android:drawableTop="@drawable/ic_color_lens_black_24dp"
+            android:text="color "
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/detailMedia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@color/white2"
+            android:drawableTop="@drawable/ic_add_black_24dp"
+            android:text="media"
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/detailCamera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white2"
+            android:drawableTop="@drawable/ic_photo_camera_black_24dp"
+            android:text="camera"
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

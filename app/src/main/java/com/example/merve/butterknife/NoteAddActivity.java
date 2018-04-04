@@ -1,8 +1,11 @@
 package com.example.merve.butterknife;
 
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,20 +23,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 import com.example.merve.butterknife.model.User;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-public class NoteAddActivity extends AppCompatActivity {
+public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLickListener {
+
+
+    private static final int CAMERA_REQUEST = 1888;
     private static final int PICK_FROM_GALLERY = 1;
     final User u = new User();
     final List<MediaEntity> list2 = new ArrayList<>();
@@ -64,14 +77,22 @@ public class NoteAddActivity extends AppCompatActivity {
     TextView txtView;
     @BindView(R.id.txtMediaNote)
     TextView txtMediaNote;
+    @BindView(R.id.submitAddNote)
+    ImageButton submitAddNote;
+    @BindView(R.id.rv_content)
+    LinearLayout rvContent;
+    @BindView(R.id.btn)
+    Button btn;
+    private AppDatabase database;
     private SharedPreferences sharedPreferences;
     private LinearLayoutManager LinearLayoutManager;
+
     private TextWatcher tw = new TextWatcher() {
         public void afterTextChanged(Editable s) {
-//            if (!edtTitle.getText().toString().isEmpty() && !edtDetail.getText().toString().isEmpty())
-//                btnSave.setVisibility(View.VISIBLE);
-//            else
-//                btnSave.setVisibility(View.GONE);
+            if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty())
+                submitAddNote.setColorFilter(Color.GREEN);
+            else
+                submitAddNote.setColorFilter(Color.WHITE);
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,16 +111,14 @@ public class NoteAddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note_add);
         ButterKnife.bind(this);
 
+
+        database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
         noteAddRecyc.setHasFixedSize(true);
-
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-
         u.setUsername(sharedPreferences.getString("username", ""));
-        mAdapter2 = new MediaAdapter();
+        mAdapter2 = new MediaAdapter(this);
         noteAddRecyc.setAdapter(mAdapter2);
         noteAddRecyc.setLayoutManager(LinearLayoutManager);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -109,7 +128,6 @@ public class NoteAddActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-//            toolbar.setIc(R.drawable.ic_check_white);
             setSupportActionBar(toolbar);
 
         }
@@ -195,6 +213,56 @@ public class NoteAddActivity extends AppCompatActivity {
         edtDetail.addTextChangedListener(tw);
         edtTitle.addTextChangedListener(tw);
 
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+            }
+        });
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            Uri uri = getImageUri(getApplicationContext(), photo);
+
+
+            MediaEntity mediaEntity = new MediaEntity();
+            mediaEntity.setPath(getRealPathFromURI(uri));
+
+            list2.add(mediaEntity);
+            mAdapter2.setList2(list2);
+            txtMediaNote.setVisibility(View.GONE);
+            noteAddCardV.setVisibility(View.VISIBLE);
+
+        } else if (resultCode == RESULT_OK) {
+            MediaEntity mediaEntity = new MediaEntity();
+            final Uri imageUri = data.getData();
+            mediaEntity.setPath(getRealPathFromURI(imageUri));
+
+            list2.add(mediaEntity);
+            mAdapter2.setList2(list2);
+            txtMediaNote.setVisibility(View.GONE);
+            noteAddCardV.setVisibility(View.VISIBLE);
+
+
+        }
+
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     private String getRealPathFromURI(Uri contentURI) {
@@ -211,91 +279,101 @@ public class NoteAddActivity extends AppCompatActivity {
         return result;
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            MediaEntity mediaEntity = new MediaEntity();
-            final Uri imageUri = data.getData();
-            mediaEntity.setPath(getRealPathFromURI(imageUri));
-
-            list2.add(mediaEntity);
-            mAdapter2.setList2(list2);
-            txtMediaNote.setVisibility(View.GONE);
-            noteAddCardV.setVisibility(View.VISIBLE);
-
-        }
+    public void onClick(View view, int position) {
 
     }
 
-//    @OnClick(R.id.btnSave)
-//    public void onViewClicked() {
-//        if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
-//
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//
-//
-//                        noteEntity.setUser(sharedPreferences.getString("username", ""));
-//                        noteEntity.setTitle(edtTitle.getText().toString());
-//                        noteEntity.setDetail(edtDetail.getText().toString());
-//
-//
-//                        noteEntity.setColors(colorr);
-////                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-////                        long milliSeconds=1390361405210L;
-//                        Calendar calendar = Calendar.getInstance();
-////                        calendar.setTimeInMillis(milliSeconds);
-////                        Log.d("time",formatter.format(calendar.getTime()));
-////                        System.out.println(formatter.format(date));
-//
-//                        noteEntity.setDate(calendar.getTimeInMillis());
-//
-//
-//                        MainActivity.database.notedao().InsertNote(noteEntity);
-//                        for (MediaEntity mediaEntity : list2) {
-//                            mediaEntity.setNoteId(Long.valueOf(MainActivity.database.notedao().getCount()));
-//
-//                            MainActivity.database.mediaDao().InsertMedia(mediaEntity);
-//                        }
-//
-//
-//                    } catch (Exception e) {
-//                        Log.e("hata", e.toString());
-//                    }
-//
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            try {
-//                                Intent i = new Intent(getApplicationContext(), NoteActivity.class);
-//                                i.putExtra("detail", edtDetail.getText());
-//                                i.putExtra("title", edtTitle.getText());
-//                                startActivity(i);
-//                                finish();
-//                            } catch (Exception e) {
-//
-//                                Log.e("hata", e.toString());
-//                            }
-//
-//                        }
-//                    });
-//
-//                }
-//            }).start();
-//
-//
-//        } else if (edtTitle.getText().toString().isEmpty()) {
-//            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
-//        } else if (edtDetail.getText().toString().isEmpty()) {
-//            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    @Override
+    public void onClickMedia(View view, int position) {
+
+    }
+
+    @Override
+    public void onClickCardView(View view, int position) {
+
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+
+    }
+
+    @Override
+    public void onLongClickMedia(View view, int position) {
+
+    }
+
+    @OnClick(R.id.submitAddNote)
+    public void onViewClicked() {
+        if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+
+                        noteEntity.setUser(sharedPreferences.getString("username", ""));
+                        noteEntity.setTitle(edtTitle.getText().toString());
+                        noteEntity.setDetail(edtDetail.getText().toString());
+
+
+                        noteEntity.setColors(colorr);
+//                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//                        long milliSeconds=1390361405210L;
+                        Calendar calendar = Calendar.getInstance();
+//                        calendar.setTimeInMillis(milliSeconds);
+//                        Log.d("time",formatter.format(calendar.getTime()));
+//                        System.out.println(formatter.format(date));
+
+                        noteEntity.setDate(calendar.getTimeInMillis());
+
+
+                        database.notedao().InsertNote(noteEntity);
+                        Long id = database.notedao().getLastNote().getId();
+                        for (MediaEntity mediaEntity : list2) {
+                            mediaEntity.setNoteId(id);
+
+                            database.mediaDao().InsertMedia(mediaEntity);
+                        }
+
+
+                    } catch (Exception e) {
+                        Log.e("hata1", e.toString());
+                    }
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                Intent i = new Intent(getApplicationContext(), NoteActivity.class);
+                                i.putExtra("detail", edtDetail.getText());
+                                i.putExtra("title", edtTitle.getText());
+                                startActivity(i);
+                                finish();
+                            } catch (Exception e) {
+
+                                Log.e("hata2", e.toString());
+                            }
+
+                        }
+                    });
+
+                }
+            }).start();
+
+
+        } else if (edtTitle.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
+        } else if (edtDetail.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 
 }

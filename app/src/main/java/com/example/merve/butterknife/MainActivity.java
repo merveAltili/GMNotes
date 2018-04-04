@@ -6,21 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.merve.butterknife.db.AppDatabase;
-import com.example.merve.butterknife.model.LoginResponse;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.txtGmNotes)
@@ -32,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btnLogin)
     Button btnLogin;
 
-    public static AppDatabase database;
+    private AppDatabase database;
 
     private SharedPreferences sharedPreferences;
     @Override

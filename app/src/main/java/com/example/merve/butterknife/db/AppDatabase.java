@@ -13,7 +13,7 @@ import com.example.merve.butterknife.db.dao.NoteDao;
 @Database(entities = {
         NoteEntity.class,
         MediaEntity.class
-}, version = 21)
+}, version = 22)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract NoteDao notedao();

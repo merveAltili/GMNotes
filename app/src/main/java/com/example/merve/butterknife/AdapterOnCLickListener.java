@@ -8,4 +8,12 @@ import android.view.View;
 
 public interface AdapterOnCLickListener {
     void onClick(View view, int position);
+
+    void onClickMedia(View view, int position);
+
+    void onClickCardView(View view, int position);
+
+    void onLongClick(View view, int position);
+
+    void onLongClickMedia(View view, int position);
 }

@@ -37,6 +37,9 @@ public interface NoteDao {
     @Query("SELECT COUNT(*) FROM Note")
     public int getCount();
 
+    @Query("SELECT * FROM Note ORDER BY id DESC limit 1")
+    public NoteEntity getLastNote();
+
 
 
 }

@@ -1,24 +1,32 @@
 package com.example.merve.butterknife;
 
 import android.app.SearchManager;
+import android.arch.persistence.room.Room;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
+import com.example.merve.butterknife.db.AppDatabase;
+import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.Note;
 import com.example.merve.butterknife.model.User;
+import com.hololo.library.photoviewer.PhotoViewer;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,8 +41,6 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
     };
     final User u = new User();
-    CursorAdapter cursorAdapter;
-    String mCurFilter;
     @BindView(R.id.recyclerView)
     RecyclerView rvMain;
     @BindView(R.id.imgNoteAdd)
@@ -44,8 +50,8 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     RecyclerView rvMain2;
     @BindView(R.id.search)
     LinearLayout search;
+    private AppDatabase database;
     private NoteAdapter mAdapter;
-    private MediaAdapter mAdapter2;
     private SharedPreferences sharedPreferences;
     private StaggeredGridLayoutManager layoutManager;
 
@@ -57,19 +63,14 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
         searchView.setOnQueryTextListener(this);
         searchView.setOnSearchClickListener(this);
-
         rvMain.setHasFixedSize(true);
-
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvMain.setLayoutManager(layoutManager);
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         u.setUsername(sharedPreferences.getString("username", ""));
-
         mAdapter = new NoteAdapter(this);
         rvMain.setAdapter(mAdapter);
-        //rvMain.setAdapter(mAdapter2);
-        // inflater.inflate(R.xml.search,xml);
+        database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
 
     }
 
@@ -89,16 +90,12 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                final List<Note> list = MainActivity.database.notedao().getNotesByUser(u.getUsername());
-
-
+                final List<Note> list = database.notedao().getNotesByUser(u.getUsername());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         mAdapter.setList(list);
-
 
                     }
                 });
@@ -126,9 +123,10 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(View view, final int position) {
 
-        Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
         startActivity(i);
@@ -137,9 +135,42 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClickMedia(View view, final int position) {
+        final List<MediaEntity> item = ((MediaAdapter) rvMain.getAdapter()).list2;
+
+
+        ArrayList<File> fileList = new ArrayList<File>();
+        for (int i = 0; i < item.size(); i++) {
+
+            fileList.add(new File(item.get(i).getPath()));
+        }
+
+        new PhotoViewer.Builder(view.getContext())
+                .file(fileList) // List of Uri, file or String url
+                .placeHolder(R.drawable.ic_launcher_background) // placeHolder for images
+                .position(position)
+                .build()
+                .show();
 
     }
+
+
+    @Override
+    public void onClickCardView(View view, final int position) {
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+
+        Intent i = new Intent(NoteActivity.this, DetailActivity.class);
+        i.putExtra("item", item);
+        startActivity(i);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                database.notedao().getNoteById(item.noteEntity.getId());
+            }
+        }).start();
+
+    }
+
 
     @Override
     public boolean onQueryTextSubmit(final String query) {
@@ -147,7 +178,7 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
             @Override
             public void run() {
 
-                final List<Note> list = MainActivity.database.notedao().searchNote("%" + query + "%");
+                final List<Note> list = database.notedao().searchNote("%" + query + "%");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -171,7 +202,7 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
             @Override
             public void run() {
 
-                final List<Note> list = MainActivity.database.notedao().searchNote("%" + newText + "%");
+                final List<Note> list = database.notedao().searchNote("%" + newText + "%");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -186,5 +217,86 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
             }
         }).start();
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        new AlertDialog.Builder(view.getContext())
+                .setTitle("Delete")
+                .setMessage("Are you want to delete ?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+
+                                    for (MediaEntity mediaEntity : item.mediaAdapterList) {
+                                        database.mediaDao().DeleteMedia(mediaEntity);
+                                    }
+                                    database.notedao().DeleteNote(item.noteEntity);
+                                    refreshAdapter();
+
+                                } catch (Exception e) {
+                                    Log.e("hata", e.toString());
+                                }
+                                // notifyDataSetChanged();
+
+
+                            }
+                        }).start();
+                    }
+
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+
+    }
+
+    @Override
+    public void onLongClickMedia(View view, final int position) {
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        new AlertDialog.Builder(view.getContext())
+                .setTitle("Delete")
+                .setMessage("Are you want to delete ?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+
+                                    database.mediaDao().DeleteMedia(item.mediaAdapterList.get(position));
+
+
+                                } catch (Exception e) {
+                                    Log.e("hata", e.toString());
+                                }
+                                // notifyDataSetChanged();
+
+
+                            }
+                        }).start();
+                    }
+
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
     }
 }

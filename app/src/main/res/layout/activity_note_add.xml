@@ -21,6 +21,17 @@
             android:background="@color/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay">
 
+            <ImageButton
+                android:id="@+id/submitAddNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:layout_margin="16dp"
+                android:background="@null"
+                android:backgroundTint="@null"
+                android:src="@drawable/ic_check_white" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -139,6 +150,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -184,7 +196,7 @@
             android:layout_weight="1"
             android:background="@color/white2"
             android:drawableTop="@drawable/ic_photo_camera_black_24dp"
-            android:text="color "
+            android:text="camera"
             android:textAllCaps="false"
             android:textColor="@color/cardview_dark_background"
             android:textSize="16sp"

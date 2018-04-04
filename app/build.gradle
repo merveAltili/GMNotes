@@ -54,7 +54,6 @@ dependencies {
     compile 'petrov.kristiyan:colorpicker-library:1.1.8'
     compile 'com.github.eltos:simpledialogfragment:2.2.2'
 
-
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
@@ -63,7 +62,6 @@ dependencies {
 
     //msayankütüphaneResim görüntüleme
     compile 'com.github.msayan:PhotoViewer:v1.0.2'
-
 
 
 }
