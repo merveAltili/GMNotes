@@ -43,6 +43,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
+import static android.view.View.GONE;
+
 public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLickListener {
 
 
@@ -83,21 +85,28 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     LinearLayout rvContent;
     @BindView(R.id.btn)
     Button btn;
+    Integer size = 0;
+
+    boolean mod = false;
     private AppDatabase database;
     private SharedPreferences sharedPreferences;
     private LinearLayoutManager LinearLayoutManager;
 
     private TextWatcher tw = new TextWatcher() {
         public void afterTextChanged(Editable s) {
-            if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty())
+            if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
+                toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+                submitAddNote.setVisibility(View.VISIBLE);
                 submitAddNote.setColorFilter(Color.GREEN);
-            else
-                submitAddNote.setColorFilter(Color.WHITE);
+                mod = true;
+            } else {
+                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+                submitAddNote.setVisibility(GONE);
+            }
+
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            // you can check for enter key here
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -110,7 +119,34 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_add);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        submitAddNote.setVisibility(GONE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mod) {
 
+                    finish();
+                } else {
+                    edtDetail.setText(null);
+                    edtTitle.setText(null);
+                    edtTitle.requestFocusFromTouch();
+                    edtDetail.setHint("Note");
+                    edtTitle.setHint("Type your note");
+                    crdview.setCardBackgroundColor(Color.WHITE);
+                    noteAddCardV.setVisibility(GONE);
+                    mod = false;
+                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+                    submitAddNote.setVisibility(GONE);
+
+
+                }
+
+            }
+        });
 
         database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
         noteAddRecyc.setHasFixedSize(true);
@@ -118,27 +154,19 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         u.setUsername(sharedPreferences.getString("username", ""));
-        mAdapter2 = new MediaAdapter(this);
+        mAdapter2 = new MediaAdapter(this, -1);
         noteAddRecyc.setAdapter(mAdapter2);
         noteAddRecyc.setLayoutManager(LinearLayoutManager);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-            setSupportActionBar(toolbar);
-
-        }
+//        if (getSupportActionBar() != null) {
+//
+//            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+//            setSupportActionBar(toolbar);
+//
+//        }
 
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            }
-        });
+
         if (btnRenk != null) {
             btnRenk.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -240,7 +268,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
 
             list2.add(mediaEntity);
             mAdapter2.setList2(list2);
-            txtMediaNote.setVisibility(View.GONE);
+            txtMediaNote.setVisibility(GONE);
             noteAddCardV.setVisibility(View.VISIBLE);
 
         } else if (resultCode == RESULT_OK) {
@@ -250,8 +278,15 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
 
             list2.add(mediaEntity);
             mAdapter2.setList2(list2);
-            txtMediaNote.setVisibility(View.GONE);
+            txtMediaNote.setVisibility(GONE);
             noteAddCardV.setVisibility(View.VISIBLE);
+            size = list2.size();
+            if (size > 0) {
+                toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+                submitAddNote.setVisibility(View.VISIBLE);
+                submitAddNote.setColorFilter(Color.GREEN);
+                mod = true;
+            }
 
 
         }
@@ -289,6 +324,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     public void onClickMedia(View view, int position) {
 
     }
+
 
     @Override
     public void onClickCardView(View view, int position) {

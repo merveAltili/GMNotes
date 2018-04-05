@@ -23,10 +23,7 @@ import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.Note;
 import com.example.merve.butterknife.model.User;
-import com.hololo.library.photoviewer.PhotoViewer;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -123,9 +120,9 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     }
 
     @Override
-    public void onClick(View view, final int position) {
+    public void onClick(View view, int positions) {
 
-        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(positions);
 
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
@@ -134,23 +131,29 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
     }
 
+
     @Override
-    public void onClickMedia(View view, final int position) {
-        final List<MediaEntity> item = ((MediaAdapter) rvMain.getAdapter()).list2;
+    public void onClickMedia(View view, int position) {
+        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
 
-
-        ArrayList<File> fileList = new ArrayList<File>();
-        for (int i = 0; i < item.size(); i++) {
-
-            fileList.add(new File(item.get(i).getPath()));
-        }
-
-        new PhotoViewer.Builder(view.getContext())
-                .file(fileList) // List of Uri, file or String url
-                .placeHolder(R.drawable.ic_launcher_background) // placeHolder for images
-                .position(position)
-                .build()
-                .show();
+        Intent i = new Intent(NoteActivity.this, DetailActivity.class);
+        i.putExtra("item", item);
+        startActivity(i);
+//        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
+//
+//
+//        ArrayList<File> fileList = new ArrayList<File>();
+//        for (int i = 0; i < item.mediaAdapterList.size(); i++) {
+//
+//            fileList.add(new File(item.mediaAdapterList.get(i).getPath()));
+//        }
+//
+//        new PhotoViewer.Builder(view.getContext())
+//                .file(fileList) // List of Uri, file or String url
+//                .placeHolder(R.drawable.ic_launcher_background) // placeHolder for images
+//                .position(position)
+//                .build()
+//                .show();
 
     }
 

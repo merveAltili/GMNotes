@@ -6,6 +6,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -46,7 +47,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, final int position) {
-        final MediaAdapter mediaAdapter = new MediaAdapter(listener);
+        final MediaAdapter mediaAdapter = new MediaAdapter(listener, position);
         holder.recyclerViewImageItem.setAdapter(mediaAdapter);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         holder.recyclerViewImageItem.setLayoutManager(layoutManager);
@@ -132,6 +133,36 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
                     listener.onLongClick(v, getAdapterPosition());
                     return true;
+                }
+            });
+            recyclerViewImageItem.setOnTouchListener(new View.OnTouchListener() {
+                private int CLICK_ACTION_THRESHOLD = 200;
+                private float startX;
+                private float startY;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            startX = event.getX();
+                            startY = event.getY();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            float endX = event.getX();
+                            float endY = event.getY();
+                            if (isAClick(startX, endX, startY, endY)) {
+                                listener.onClick(v, getAdapterPosition());
+                            }
+                            break;
+                    }
+                    v.getParent().requestDisallowInterceptTouchEvent(true); //specific to my project
+                    return false;
+                }
+
+                private boolean isAClick(float startX, float endX, float startY, float endY) {
+                    float differenceX = Math.abs(startX - endX);
+                    float differenceY = Math.abs(startY - endY);
+                    return !(differenceX > CLICK_ACTION_THRESHOLD/* =5 */ || differenceY > CLICK_ACTION_THRESHOLD);
                 }
             });
 

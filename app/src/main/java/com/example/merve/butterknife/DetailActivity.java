@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.Note;
+import com.example.merve.butterknife.db.Entity.NoteEntity;
 import com.example.merve.butterknife.model.User;
 import com.hololo.library.photoviewer.PhotoViewer;
 
@@ -49,6 +50,8 @@ import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class DetailActivity extends AppCompatActivity implements AdapterOnCLickListener {
+
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_REQUEST = 1888;
     final User u = new User();
@@ -83,6 +86,9 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     Button detailCamera;
     @BindView(R.id.detailColor)
     Button detailColor;
+    boolean mod = false;
+    int sizeM = 0;
+    private Note colonentity = new Note();
     private AppDatabase database;
     private MediaAdapter mAdapter;
     private android.support.v7.widget.LinearLayoutManager LinearLayoutManager;
@@ -90,9 +96,13 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     private TextWatcher tw = new TextWatcher() {
         public void afterTextChanged(Editable s) {
             size = (int) detailDetail.getTextSize();
+
             if (!detailText.getText().toString().isEmpty() && !detailDetail.getText().toString().isEmpty()) {
 
+                toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+                submitEditNote.setVisibility(View.VISIBLE);
                 submitEditNote.setColorFilter(Color.GREEN);
+                mod = true;
             } else {
                 submitEditNote.setColorFilter(Color.WHITE);
             }
@@ -117,13 +127,19 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         setSupportActionBar(toolbar);
         database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
-        mAdapter = new MediaAdapter(this);
+        mAdapter = new MediaAdapter(this, -1);
         noteAddRecyc2.setAdapter(mAdapter);
 
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         Bundle bundle = getIntent().getExtras();
-
+        submitEditNote.setVisibility(View.GONE);
         entity = bundle.getParcelable("item");
+        colonentity.noteEntity = new NoteEntity();
+        colonentity.noteEntity.setTitle(entity.noteEntity.getTitle());
+        colonentity.noteEntity.setDetail(entity.noteEntity.getDetail());
+        colonentity.noteEntity.setColors(entity.noteEntity.getColors());
+        colonentity.mediaAdapterList = entity.mediaAdapterList;
+
         mediaEntities.addAll(entity.mediaAdapterList);
         mAdapter.setList2(mediaEntities);
         u.setUsername(sharedPreferences.getString("username", ""));
@@ -133,29 +149,68 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             noteAddCardV2.setVisibility(View.VISIBLE);
 
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(DetailActivity.this, NoteActivity.class);
-                    startActivity(i);
-                    finish();
-
-                }
-            });
-            toolbar.setTitle("Detail");
-            setSupportActionBar(toolbar);
-        }
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                if (!mod) {
+
+                    finish();
+                } else {
+                    entity.noteEntity.setTitle(colonentity.noteEntity.getTitle());
+                    entity.noteEntity.setDetail(colonentity.noteEntity.getDetail());
+                    detailText.setText(entity.noteEntity.getTitle());
+                    detailDetail.setText(entity.noteEntity.getDetail());
+                    entity.noteEntity.setColors(colonentity.noteEntity.getColors());
+                    crdview2.setCardBackgroundColor(entity.noteEntity.getColors());
+                    noteAddCardV2.setCardBackgroundColor(entity.noteEntity.getColors());
+                    noteAddRecyc2.setBackgroundColor(entity.noteEntity.getColors());
+                    entity.mediaAdapterList = colonentity.mediaAdapterList;
+
+                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+                    submitEditNote.setVisibility(View.GONE);
+
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+
+
+                                database.notedao().UpdateNote(entity.noteEntity);
+                                Long id = database.notedao().getLastNote().getId();
+                                database.mediaDao().deleteMediasByNoteId(id);
+                                for (MediaEntity mediaEntity : mediaEntities) {
+
+                                    mediaEntity.setNoteId(id);
+                                    database.mediaDao().InsertMedia(mediaEntity);
+                                }
+
+
+                                mod = false;
+
+                                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+                                submitEditNote.setVisibility(View.GONE);
+
+                            } catch (Exception e) {
+                                Log.e("hata editnotesave2", e.toString());
+                            }
+
+
+                        }
+                    }).start();
+//                        Intent i = new Intent(DetailActivity.this, DetailActivity.class);
+//                        startActivity(i);
+//                        finish();
+
+                }
+
             }
         });
+        toolbar.setTitle("");
+
 
         detailDetail.setText(entity.noteEntity.getDetail());
 
@@ -242,6 +297,40 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mod)
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (colorr == 0) {
+                            entity.noteEntity.setColors(entity.noteEntity.getColors());
+                        } else
+                            entity.noteEntity.setColors(colorr);
+
+                        database.notedao().UpdateNote(entity.noteEntity);
+                        Long id = database.notedao().getLastNote().getId();
+                        database.mediaDao().deleteMediasByNoteId(id);
+                        for (MediaEntity mediaEntity : mediaEntities) {
+
+                            mediaEntity.setNoteId(id);
+                            database.mediaDao().InsertMedia(mediaEntity);
+                        }
+
+
+                    } catch (Exception e) {
+                        Log.e("hata editnotesave", e.toString());
+                    }
+
+                }
+            }).start();
+
+
+    }
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -249,20 +338,27 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             Uri uri = getImageUri(getApplicationContext(), photo);
-
             MediaEntity mediaEntity = new MediaEntity();
             mediaEntity.setPath(getRealPathFromURI(uri));
-
             mediaEntities.add(mediaEntity);
+
             mAdapter.setList2(mediaEntities);
+
 
         } else if (resultCode == RESULT_OK) {
             MediaEntity mediaEntity = new MediaEntity();
             final Uri imageUri = data.getData();
             mediaEntity.setPath(getRealPathFromURI(imageUri));
-
             mediaEntities.add(mediaEntity);
             mAdapter.setList2(mediaEntities);
+
+            sizeM = mediaEntities.size();
+            if (sizeM > 0) {
+                toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+                submitEditNote.setVisibility(View.VISIBLE);
+                submitEditNote.setColorFilter(Color.GREEN);
+                mod = true;
+            }
         }
 
     }
@@ -270,13 +366,13 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     private void dispatchTakePictureIntent() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
     }
-
     @OnClick(R.id.submitEditNote)
     public void onViewClicked() {
 
         if (!detailDetail.getText().toString().isEmpty()) {
+
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -292,9 +388,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                             entity.noteEntity.setColors(colorr);
 
                         Calendar calendar = Calendar.getInstance();
-//
                         entity.noteEntity.setDate(calendar.getTimeInMillis());
-
                         database.notedao().UpdateNote(entity.noteEntity);
                         Long id = database.notedao().getLastNote().getId();
                         database.mediaDao().deleteMediasByNoteId(id);
@@ -321,7 +415,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
                                 Log.e("hata", e.toString());
                             }
-
                         }
                     });
 
@@ -332,9 +425,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         } else {
             Toast.makeText(this, "Lütfen geçerli bir değer giriniz", Toast.LENGTH_SHORT).show();
         }
-
     }
-
 
     public void onClickEdit(View view) {
         mAdapter.asd();
@@ -345,7 +436,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         detailText.setEnabled(true);
         detailText.setFocusableInTouchMode(true);
         detailText.setFocusable(true);
-
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         detailText.requestFocus();
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -354,40 +444,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
     }
 
-    public void onClickRenk(View view) {
 
-        final ColorPicker colorPicker = new ColorPicker(DetailActivity.this);
-        ArrayList<String> colors = new ArrayList<>();
-        colors.add("#FFCDD2");
-        colors.add("#D1C4E9");
-        colors.add("#B3E5FC");
-        colors.add("#C8E6C9");
-        colors.add("#FFE0B2");
-        colors.add("#F9FBE7");
-        colors.add("#F5F5F5");
-        colors.add("#E0F2F1");
-
-        colorPicker
-                .setDefaultColorButton(Color.parseColor("#f84c44"))
-                .setColors(colors)
-                .setColumns(5)
-                .setRoundColorButton(true)
-                .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
-                    @Override
-                    public void onChooseColor(int position, int color) {
-                        Log.d("position", "" + position);// will be fired only when OK button was tapped
-                        colorr = color;
-                        crdview2.setCardBackgroundColor(color);
-                        noteAddRecyc2.setBackgroundColor(color);
-                        noteAddCardV2.setBackgroundColor(color);
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-                }).show();
-    }
 
     @OnClick({R.id.detailColor, R.id.detailMedia, R.id.detailCamera})
     public void onViewClicked(View view) {
@@ -438,11 +495,19 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                             public void onClick(View v, int position, int color) {
                                 Log.d("position", "" + position);
                                 colorr = color;
+
                                 crdview2.setCardBackgroundColor(color);
                                 noteAddCardV2.setCardBackgroundColor(color);
                                 noteAddRecyc2.setBackgroundColor(color);
+                                toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+                                submitEditNote.setVisibility(View.VISIBLE);
+                                submitEditNote.setColorFilter(Color.GREEN);
+                                mod = true;
+
                                 colorPicker.dismissDialog();
+
                             }
+
                         })
                         .show();
 
@@ -482,6 +547,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 .show();
 
     }
+
 
     @Override
     public void onClickCardView(View view, int position) {

@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import com.example.merve.butterknife.db.Entity.MediaEntity;
@@ -29,15 +28,17 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     boolean mediaMod = false;
     int count = 0;
     private AdapterOnCLickListener listener;
+    private Integer noteposs;
 
 
-    public MediaAdapter(AdapterOnCLickListener listener) {
+    public MediaAdapter(AdapterOnCLickListener listener, Integer noteposs) {
+        this.noteposs = noteposs;
         this.listener = listener;
     }
 
     @Override
     public MediaAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener);
+        return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener, noteposs);
     }
 
     public void asd() {
@@ -49,38 +50,37 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public void onBindViewHolder(final MediaAdapter.ViewHolder holder, final int position) {
         try {
             Picasso.get().load(new File(list2.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
-            if (selectedMod) {
-                holder.checkboxImage.setVisibility(View.VISIBLE);
-                if (holder.checkboxImage.isClickable()) {
-                    holder.checkboxImage.setEnabled(true);
-                    holder.checkboxImage.setClickable(true);
-                    holder.checkboxImage.notify();
-                } else {
-                    holder.checkboxImage.setVisibility(View.GONE);
-                    holder.checkboxImage.setEnabled(false);
-                    holder.checkboxImage.setClickable(false);
+//            if (selectedMod) {
+//                holder.checkboxImage.setVisibility(View.VISIBLE);
+//                if (holder.checkboxImage.isClickable()) {
+//                    holder.checkboxImage.setEnabled(true);
+//                    holder.checkboxImage.setClickable(true);
+//                    holder.checkboxImage.notify();
+//                } else {
+//                    holder.checkboxImage.setVisibility(View.GONE);
+//                    holder.checkboxImage.setEnabled(false);
+//                    holder.checkboxImage.setClickable(false);
+//
+//                }
+//                notifyDataSetChanged();
+//            }
 
-                }
-                notifyDataSetChanged();
-            }
-
-            holder.checkboxImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!holder.checkboxImage.isClickable()) {
-                        holder.checkboxImage.setVisibility(View.VISIBLE);
-                        holder.checkboxImage.setEnabled(true);
-                        holder.checkboxImage.setClickable(true);
-                        holder.checkboxImage.notify();
-                    } else {
-                        holder.checkboxImage.setVisibility(View.GONE);
-                        holder.checkboxImage.setEnabled(false);
-                        holder.checkboxImage.setClickable(false);
-
-                    }
-                }
-            });
-
+//            holder.checkboxImage.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (!holder.checkboxImage.isClickable()) {
+//                        holder.checkboxImage.setVisibility(View.VISIBLE);
+//                        holder.checkboxImage.setEnabled(true);
+//                        holder.checkboxImage.setClickable(true);
+//                        holder.checkboxImage.notify();
+//                    } else {
+//                        holder.checkboxImage.setVisibility(View.GONE);
+//                        holder.checkboxImage.setEnabled(false);
+//                        holder.checkboxImage.setClickable(false);
+//
+//                    }
+//                }
+//            });
 
 
         } catch (Exception ex) {
@@ -104,13 +104,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
 
-        @BindView(R.id.checkboxImage)
-        public CheckBox checkboxImage;
         @BindView(R.id.imgVItem)
         public ImageView imgVItem;
 
 
-        ViewHolder(View view, final AdapterOnCLickListener listener) {
+        ViewHolder(View view, final AdapterOnCLickListener listener, final Integer noteposs) {
 
             super(view);
 
@@ -124,8 +122,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
             imgVItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (noteposs != -1)
+                        listener.onClickMedia(v, noteposs);
+                    else
+                        listener.onClickMedia(v, getAdapterPosition());
 
-                    listener.onClickMedia(v, getAdapterPosition());
                 }
             });
 
@@ -134,43 +135,10 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                 public boolean onLongClick(final View v) {
 
                     listener.onLongClickMedia(v, getAdapterPosition());
-//                    new AlertDialog.Builder(v.getContext())
-//                            .setTitle("Delete")
-//                            .setMessage("Are you want to delete ?")
-//                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    new Thread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            try {
-//
-//                                                database.mediaDao().DeleteMedia(list2.get(position));
-////                                                        MediaAdapter.this.notifyDataSetChanged();
-//
-//
-//                                            } catch (Exception e) {
-//                                                Log.e("hata", e.toString());
-//                                            }
-//
-//
-//                                        }
-//                                    }).start();
-//
-//                                }
-//                            })
-//                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//
-//                                }
-//                            }).show();
-//
 
                     return true;
                 }
             });
-
 
 
         }

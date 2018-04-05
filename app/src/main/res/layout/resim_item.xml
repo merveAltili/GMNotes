@@ -24,13 +24,5 @@
             android:clickable="true" />
 
 
-        <CheckBox
-            android:id="@+id/checkboxImage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@id/imgVItem"
-            android:layout_marginRight="1dp"
-            android:visibility="gone" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
