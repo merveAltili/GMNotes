@@ -48,11 +48,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(NoteAdapter.ViewHolder holder, final int position) {
         final MediaAdapter mediaAdapter = new MediaAdapter(listener, position);
-        holder.recyclerViewImageItem.setAdapter(mediaAdapter);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         holder.recyclerViewImageItem.setLayoutManager(layoutManager);
         mediaAdapter.setList2(list.get(position).mediaAdapterList);
-
+        holder.recyclerViewImageItem.setAdapter(mediaAdapter);
 
         holder.txt1.setText(list.get(position).noteEntity.getTitle());
 

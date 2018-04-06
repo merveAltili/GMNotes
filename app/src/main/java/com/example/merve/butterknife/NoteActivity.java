@@ -302,4 +302,9 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                     }
                 }).show();
     }
+
+    @Override
+    public void onDeleteClick(View view, int position) {
+
+    }
 }

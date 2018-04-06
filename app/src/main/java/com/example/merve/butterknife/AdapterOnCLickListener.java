@@ -16,4 +16,6 @@ public interface AdapterOnCLickListener {
     void onLongClick(View view, int position);
 
     void onLongClickMedia(View view, int position);
+
+    void onDeleteClick(View view, int position);
 }

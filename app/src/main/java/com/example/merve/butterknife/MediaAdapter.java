@@ -36,51 +36,27 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         this.listener = listener;
     }
 
+    public void startSelectedMod() {
+        selectedMod = true;
+        notifyDataSetChanged();
+    }
+
+    public void closeSelectedMod() {
+        selectedMod = false;
+        notifyDataSetChanged();
+    }
+
     @Override
     public MediaAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new MediaAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.resim_item, parent, false), listener, noteposs);
     }
 
-    public void asd() {
-        selectedMod = true;
-
-    }
 
     @Override
     public void onBindViewHolder(final MediaAdapter.ViewHolder holder, final int position) {
         try {
             Picasso.get().load(new File(list2.get(position).getPath())).centerCrop().fit().into(holder.imgVItem);
-//            if (selectedMod) {
-//                holder.checkboxImage.setVisibility(View.VISIBLE);
-//                if (holder.checkboxImage.isClickable()) {
-//                    holder.checkboxImage.setEnabled(true);
-//                    holder.checkboxImage.setClickable(true);
-//                    holder.checkboxImage.notify();
-//                } else {
-//                    holder.checkboxImage.setVisibility(View.GONE);
-//                    holder.checkboxImage.setEnabled(false);
-//                    holder.checkboxImage.setClickable(false);
-//
-//                }
-//                notifyDataSetChanged();
-//            }
-
-//            holder.checkboxImage.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (!holder.checkboxImage.isClickable()) {
-//                        holder.checkboxImage.setVisibility(View.VISIBLE);
-//                        holder.checkboxImage.setEnabled(true);
-//                        holder.checkboxImage.setClickable(true);
-//                        holder.checkboxImage.notify();
-//                    } else {
-//                        holder.checkboxImage.setVisibility(View.GONE);
-//                        holder.checkboxImage.setEnabled(false);
-//                        holder.checkboxImage.setClickable(false);
-//
-//                    }
-//                }
-//            });
+            holder.bind(selectedMod);
 
 
         } catch (Exception ex) {
@@ -107,6 +83,8 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         @BindView(R.id.imgVItem)
         public ImageView imgVItem;
 
+        @BindView(R.id.imgCancel)
+        public ImageView imgCancel;
 
         ViewHolder(View view, final AdapterOnCLickListener listener, final Integer noteposs) {
 
@@ -140,7 +118,21 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                 }
             });
 
+            imgCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onDeleteClick(v, getAdapterPosition());
+                }
+            });
 
+
+        }
+
+        public void bind(boolean selectmod) {
+            if (selectmod) {
+                imgCancel.setVisibility(View.VISIBLE);
+            } else
+                imgCancel.setVisibility(View.GONE);
         }
     }
 }

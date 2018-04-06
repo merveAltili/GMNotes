@@ -34,4 +34,6 @@ public interface MediaDao {
     @Query("DELETE  FROM Media WHERE NoteId=:NoteId ")
     public void deleteMediasByNoteId(Long NoteId);
 
+    @Query("DELETE  FROM Media WHERE id=:id ")
+    public void deleteMediaById(Long id);
 }
