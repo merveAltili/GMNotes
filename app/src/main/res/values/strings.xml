@@ -3,4 +3,6 @@
     <string name="app_label">label</string>
     <string name="action_setting">Setting</string>
     <string name="title_activity_search_reault">SearchReaultActivity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

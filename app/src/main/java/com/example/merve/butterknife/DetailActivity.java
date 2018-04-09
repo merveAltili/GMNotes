@@ -50,6 +50,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
+import static android.view.View.GONE;
+
 public class DetailActivity extends AppCompatActivity implements AdapterOnCLickListener {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -100,10 +102,10 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             size = (int) detailDetail.getTextSize();
 
             if (!detailText.getText().toString().isEmpty() && !detailDetail.getText().toString().isEmpty()) {
-
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitEditNote.setVisibility(View.VISIBLE);
                 submitEditNote.setColorFilter(Color.GREEN);
+
                 mod = true;
             } else {
                 submitEditNote.setColorFilter(Color.WHITE);
@@ -111,7 +113,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -124,8 +125,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-
-
         progress = new ProgressDialog(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         setSupportActionBar(toolbar);
@@ -133,9 +132,11 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         mAdapter = new MediaAdapter(this, -1);
         noteAddRecyc2.setAdapter(mAdapter);
 
+        detailDetail.setCursorVisible(false);
+        detailText.setCursorVisible(false);
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         Bundle bundle = getIntent().getExtras();
-        submitEditNote.setVisibility(View.GONE);
+        submitEditNote.setVisibility(GONE);
         entity = bundle.getParcelable("item");
         colonentity.noteEntity = new NoteEntity();
         colonentity.noteEntity.setTitle(entity.noteEntity.getTitle());
@@ -147,11 +148,32 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         mAdapter.setList2(mediaEntities);
         u.setUsername(sharedPreferences.getString("username", ""));
         if (entity.mediaAdapterList.size() == 0) {
-            noteAddCardV2.setVisibility(View.GONE);
+            noteAddCardV2.setVisibility(GONE);
         } else
             noteAddCardV2.setVisibility(View.VISIBLE);
 
 
+        detailText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    noteAddCardV2.setVisibility(View.VISIBLE);
+
+                } else {
+                    noteAddCardV2.setVisibility(GONE);
+                }
+            }
+        });
+        detailDetail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    noteAddCardV2.setVisibility(View.VISIBLE);
+                } else {
+                    noteAddCardV2.setVisibility(GONE);
+                }
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
@@ -159,7 +181,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             @Override
             public void onClick(View v) {
                 if (!mod) {
-
                     finish();
                 } else {
                     new AlertDialog.Builder(DetailActivity.this)
@@ -174,41 +195,33 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                     detailDetail.setText(entity.noteEntity.getDetail());
                                     entity.noteEntity.setColors(colonentity.noteEntity.getColors());
                                     crdview2.setCardBackgroundColor(entity.noteEntity.getColors());
+                                    noteAddCardV2.setVisibility(View.VISIBLE);
                                     noteAddCardV2.setCardBackgroundColor(entity.noteEntity.getColors());
                                     noteAddRecyc2.setBackgroundColor(entity.noteEntity.getColors());
                                     entity.mediaAdapterList = colonentity.mediaAdapterList;
                                     mAdapter.setList2(entity.mediaAdapterList);
-
                                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-                                    submitEditNote.setVisibility(View.GONE);
+                                    submitEditNote.setVisibility(GONE);
 
 
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
-
-
                                                 database.notedao().UpdateNote(entity.noteEntity);
                                                 Long id = entity.noteEntity.getId();
                                                 database.mediaDao().deleteMediasByNoteId(id);
                                                 for (MediaEntity mediaEntity : mediaEntities) {
-
                                                     mediaEntity.setNoteId(id);
                                                     database.mediaDao().InsertMedia(mediaEntity);
                                                 }
-
-
                                                 mod = false;
-
                                                 toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-                                                submitEditNote.setVisibility(View.GONE);
+                                                submitEditNote.setVisibility(GONE);
 
                                             } catch (Exception e) {
                                                 Log.e("hata editnotesave2", e.toString());
                                             }
-
-
                                         }
                                     }).start();
 
@@ -221,10 +234,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
                                 }
                             }).show();
-
-
-
-
                 }
 
             }
@@ -252,7 +261,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 detailText.setEnabled(true);
                 detailText.setFocusableInTouchMode(true);
                 detailText.setFocusable(true);
-
+                detailText.setCursorVisible(true);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 detailText.requestFocus();
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -266,16 +275,14 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 detailDetail.setEnabled(true);
                 detailDetail.setFocusableInTouchMode(true);
                 detailDetail.setFocusable(true);
+                detailDetail.setCursorVisible(true);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 detailText.requestFocus();
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 detailText.setSelection(detailText.getText().length(), detailText.getText().length());
             }
         });
-
-
         detailText.setText(entity.noteEntity.getTitle());
-
         if (detailMedia != null) {
             detailMedia.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -287,8 +294,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             });
 
         }
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         detailText.addTextChangedListener(tw);
         detailDetail.addTextChangedListener(tw);
     }
@@ -332,7 +337,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 public void run() {
 
                     try {
-
                         entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
                         entity.noteEntity.setDetail(detailDetail.getText().toString());
                         entity.noteEntity.setTitle(detailText.getText().toString());
@@ -341,7 +345,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                             entity.noteEntity.setColors(entity.noteEntity.getColors());
                         } else
                             entity.noteEntity.setColors(colorr);
-
                         Calendar calendar = Calendar.getInstance();
                         entity.noteEntity.setDate(calendar.getTimeInMillis());
                         database.notedao().UpdateNote(entity.noteEntity);
@@ -411,8 +414,8 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             }
         }
 
-    }
 
+    }
     private void dispatchTakePictureIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
@@ -587,7 +590,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
         new PhotoViewer.Builder(view.getContext())
                 .file(fileList) // List of Uri, file or String url
-                .placeHolder(R.drawable.ic_launcher_background) // placeHolder for images
+                .placeHolder(R.drawable.ic_image_black_24dp) // placeHolder for images
                 .position(position)
 
                 .build()

@@ -9,14 +9,24 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SplashActivity extends AppCompatActivity {
 
     private static final int REQ_CODE = 666;
+    @BindView(R.id.splashBottomText)
+    TextView splashBottomText;
+    @BindView(R.id.splashCenterText)
+    TextView splashCenterText;
+    @BindView(R.id.txtPermissions)
+    TextView txtPermissions;
     private boolean permissionsGranted = false;
     private List<String> permissionList = new ArrayList<>();
 
@@ -24,6 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
         checkAppPermissions();
 
     }
@@ -34,10 +45,8 @@ public class SplashActivity extends AppCompatActivity {
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
             permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             permissionList.add(Manifest.permission.CAMERA);
-
         if (!permissionList.isEmpty())
             ActivityCompat.requestPermissions(this, permissionList.toArray(new String[permissionList.size()]), REQ_CODE);
         else
@@ -56,7 +65,7 @@ public class SplashActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                        Intent mainIntent = new Intent(SplashActivity.this, NoteActivity.class);
                         SplashActivity.this.startActivity(mainIntent);
                         SplashActivity.this.finish();
                     }
@@ -77,7 +86,13 @@ public class SplashActivity extends AppCompatActivity {
         if (permissionsGranted) {
             startThread();
         } else {
-            Toast.makeText(this, " .", Toast.LENGTH_SHORT).show();
+            txtPermissions.setVisibility(View.VISIBLE);
+            txtPermissions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkAppPermissions();
+                }
+            });
         }
     }
 }

@@ -102,7 +102,6 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             }
 
         }
-
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
@@ -137,6 +136,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                     edtTitle.setHint("Type your note");
                     crdview.setCardBackgroundColor(Color.WHITE);
                     noteAddCardV.setVisibility(GONE);
+                    list2.clear();
                     mod = false;
                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
                     submitAddNote.setVisibility(GONE);
@@ -244,35 +244,40 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
 
     @Override
     public void onBackPressed() {
-        if (mod) {
-            showProgressBar();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        noteEntity.setUser(sharedPreferences.getString("username", ""));
-                        noteEntity.setTitle(edtTitle.getText().toString());
-                        noteEntity.setDetail(edtDetail.getText().toString());
-                        noteEntity.setColors(colorr);
-                        Calendar calendar = Calendar.getInstance();
-                        noteEntity.setDate(calendar.getTimeInMillis());
-                        database.notedao().InsertNote(noteEntity);
-                        Long id = database.notedao().getLastNote().getId();
-                        for (MediaEntity mediaEntity : list2) {
-                            mediaEntity.setNoteId(id);
-                            database.mediaDao().InsertMedia(mediaEntity);
+        if (!edtTitle.getText().toString().isEmpty() && !edtDetail.getText().toString().isEmpty()) {
+            if (mod) {
+                showProgressBar();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            noteEntity.setUser(sharedPreferences.getString("username", ""));
+                            noteEntity.setTitle(edtTitle.getText().toString());
+                            noteEntity.setDetail(edtDetail.getText().toString());
+                            noteEntity.setColors(colorr);
+                            Calendar calendar = Calendar.getInstance();
+                            noteEntity.setDate(calendar.getTimeInMillis());
+                            database.notedao().InsertNote(noteEntity);
+                            Long id = database.notedao().getLastNote().getId();
+
+                            for (MediaEntity mediaEntity : list2) {
+                                mediaEntity.setNoteId(id);
+                                database.mediaDao().InsertMedia(mediaEntity);
+                            }
+                            progress.dismiss();
+
+                        } catch (Exception e) {
+                            Log.e("hata editnotesave2", e.toString());
                         }
-                        progress.dismiss();
 
-                    } catch (Exception e) {
-                        Log.e("hata editnotesave2", e.toString());
                     }
+                }).start();
+            }
 
-                }
-            }).start();
+            super.onBackPressed();
+        } else {
+            Toast.makeText(NoteAddActivity.this, "title or detail error", Toast.LENGTH_SHORT).show();
         }
-
-        super.onBackPressed();
     }
 
     @Override
@@ -283,10 +288,10 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             Uri uri = getImageUri(getApplicationContext(), photo);
 
-            MediaEntity mediaEntity = new MediaEntity();
-            mediaEntity.setPath(getRealPathFromURI(uri));
+            final MediaEntity mediaEntity2 = new MediaEntity();
+            mediaEntity2.setPath(getRealPathFromURI(uri));
 
-            list2.add(mediaEntity);
+            list2.add(mediaEntity2);
             mAdapter2.setList2(list2);
             txtMediaNote.setVisibility(GONE);
             noteAddCardV.setVisibility(View.VISIBLE);
