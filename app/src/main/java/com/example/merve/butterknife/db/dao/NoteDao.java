@@ -30,7 +30,6 @@ public interface NoteDao {
     @Query("SELECT * FROM Note WHERE id= :id")
     public List<Note> getNoteById(Long id);
 
-
     @Query("SELECT * FROM Note WHERE title LIKE :query OR detail LIKE :query ORDER BY date DESC")
     public List<Note> searchNote(String query);
 
@@ -39,7 +38,6 @@ public interface NoteDao {
 
     @Query("SELECT * FROM Note ORDER BY id DESC limit 1")
     public NoteEntity getLastNote();
-
 
 
 }
