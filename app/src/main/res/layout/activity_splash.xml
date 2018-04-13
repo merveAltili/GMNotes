@@ -23,7 +23,7 @@
         android:gravity="center"
         android:text="GM NOTE"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textColor="@color/colorPrimary"
+        android:textColor="#FFA64D"
         android:textSize="30sp"
         android:textStyle="bold" />
 

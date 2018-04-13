@@ -29,7 +29,7 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
 
         Intent toastIntent = new Intent(context, ExampleAppWidgetProvider.class);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        toastIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        toastIntent.setAction(TOAST_ACTION);
         toastIntent.setData(Uri.parse(toastIntent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, Intent.URI_INTENT_SCHEME, toastIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);

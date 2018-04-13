@@ -4,7 +4,7 @@
     android:initialLayout="@layout/example_app_widget_provider"
     android:minHeight="110dp"
     android:minWidth="250dp"
-    android:previewImage="@drawable/gmnotewidget"
+    android:previewImage="@drawable/widgetnoteimg"
     android:resizeMode="vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"></appwidget-provider>
