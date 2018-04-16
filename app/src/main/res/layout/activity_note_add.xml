@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/appbar"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="78dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
@@ -52,7 +52,8 @@
             android:layout_marginRight="12dp"
             android:layout_marginTop="8dp"
             android:layout_weight="7"
-            android:clickable="true"
+            android:clickable="false"
+            android:focusable="false"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
             cardview:cardCornerRadius="4dp">
@@ -60,9 +61,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="false"
+                android:focusable="false"
                 android:orientation="vertical"
                 android:padding="16dp">
-
 
                 <EditText
                     android:id="@+id/edtTitle"
@@ -75,7 +77,8 @@
                     android:background="@null"
                     android:capitalize="sentences"
                     android:ems="4"
-                    android:hint="Type your note"
+                    android:focusable="false"
+                    android:hint="Başlık giriniz"
                     android:inputType="textCapSentences"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -89,8 +92,9 @@
                     android:layout_marginTop="4dp"
                     android:background="@null"
                     android:capitalize="sentences"
+                    android:focusable="false"
                     android:gravity="top"
-                    android:hint="Note"
+                    android:hint="Not giriniz"
                     android:inputType="textMultiLine"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -101,7 +105,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/crdview"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_weight="3"
@@ -117,9 +120,9 @@
                 android:id="@+id/txtView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="4dp"
-                android:text="Media"
+                android:hint="Medya"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -134,7 +137,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:hint="Note media add"
+                    android:hint="Notunuza resim ekleyin"
+                    android:textSize="12sp"
                     android:visibility="visible" />
 
                 <android.support.v7.widget.RecyclerView
@@ -161,9 +165,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:padding="12dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="8dp"
         android:weightSum="3">
-
 
         <Button
             android:id="@+id/btnRenk"
@@ -175,9 +181,10 @@
             android:drawableTop="@drawable/ic_color_lens_black_24dp"
             android:elevation="4dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:text="color "
+            android:padding="8dp"
+            android:text="Renklendir "
             android:textAllCaps="false"
-            android:textColor="@color/cardview_dark_background"
+            android:textColor="@color/gri"
             android:textSize="16sp" />
 
         <Button
@@ -187,12 +194,13 @@
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@drawable/btnradius"
-            android:drawableTop="@drawable/ic_add_black_24dp"
+            android:drawableTop="@drawable/ic_add_black_24_dp"
             android:elevation="4dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:text="media"
+            android:padding="8dp"
+            android:text="Medya Ekle"
             android:textAllCaps="false"
-            android:textColor="@color/cardview_dark_background"
+            android:textColor="@color/gri"
             android:textSize="16sp" />
 
         <Button
@@ -204,13 +212,13 @@
             android:drawableTop="@drawable/ic_photo_camera_black_24dp"
             android:elevation="4dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:text="camera"
+            android:padding="8dp"
+            android:text="Resim Çek"
             android:textAllCaps="false"
-            android:textColor="@color/cardview_dark_background"
+            android:textColor="@color/gri"
             android:textSize="16sp" />
 
     </LinearLayout>
-
 
 </RelativeLayout>
 

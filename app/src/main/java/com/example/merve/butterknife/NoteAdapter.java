@@ -15,9 +15,9 @@ import android.widget.TextView;
 import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.Note;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public NoteAddActivity noteAddActivity;
     List<Note> list = new ArrayList<>();
+    String myString;
     private AppDatabase database;
     private AdapterOnCLickListener listener;
     private StaggeredGridLayoutManager layoutManager;
@@ -63,12 +64,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.crdview.setCardBackgroundColor(Color.WHITE);
         } else
             holder.crdview.setCardBackgroundColor(list.get(position).noteEntity.getColors());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.setTimeInMillis(list.get(position).noteEntity.getDate());
-        String date = formatter.format(calendar.getTime());
-        holder.txt3.setText(date);
+        Date datee = new Date();
+        String stringDate = DateFormat.getDateInstance(DateFormat.MEDIUM).format(datee);
+        holder.txt3.setText(stringDate);
         holder.recyclerViewImageItem.hasOnClickListeners();
         holder.recyclerViewImageItem.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/itemWidget"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:foreground="?android:attr/selectableItemBackground">
 
 
     <ImageView
@@ -36,7 +37,8 @@
         android:layout_alignTop="@id/txtGmNote"
         android:layout_toEndOf="@id/txtGmNote"
         android:layout_toRightOf="@id/txtGmNote"
-        android:background="#FFA64D">
+        android:background="#FFA64D"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <ImageButton
             android:layout_width="20dp"

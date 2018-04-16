@@ -27,15 +27,13 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
 
         views.setRemoteAdapter(R.id.widget_listview, serviceIntent);
 
-        Intent toastIntent = new Intent(context, ExampleAppWidgetProvider.class);
+        Intent toastIntent = new Intent(context, DetailActivity.class);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         toastIntent.setAction(TOAST_ACTION);
         toastIntent.setData(Uri.parse(toastIntent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, Intent.URI_INTENT_SCHEME, toastIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.widget_listview, toastPendingIntent);
-
-
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_listview);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

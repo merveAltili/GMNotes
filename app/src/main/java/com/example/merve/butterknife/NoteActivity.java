@@ -35,7 +35,6 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
     static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME,
-
     };
     final User u = new User();
     @BindView(R.id.recyclerView)
@@ -91,20 +90,15 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         mAdapter.setList(list);
-
                     }
                 });
-
             }
         }).start();
     }
 
-
     public void itemOnclick(View view) {
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
-
         startActivity(i);
     }
 
@@ -112,6 +106,7 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
         Intent in = new Intent("android.intent.action.SEARCH");
         in.putExtra(SearchManager.QUERY, key);
         startActivity(in);
+
     }
 
     @Override
@@ -121,40 +116,18 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
     @Override
     public void onClick(View view, int positions) {
-
         final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(positions);
-
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
         startActivity(i);
-
-
     }
-
 
     @Override
     public void onClickMedia(View view, int position) {
         final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
-
         Intent i = new Intent(NoteActivity.this, DetailActivity.class);
         i.putExtra("item", item);
         startActivity(i);
-//        final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
-//
-//
-//        ArrayList<File> fileList = new ArrayList<File>();
-//        for (int i = 0; i < item.mediaAdapterList.size(); i++) {
-//
-//            fileList.add(new File(item.mediaAdapterList.get(i).getPath()));
-//        }
-//
-//        new PhotoViewer.Builder(view.getContext())
-//                .file(fileList) // List of Uri, file or String url
-//                .placeHolder(R.drawable.ic_launcher_background) // placeHolder for images
-//                .position(position)
-//                .build()
-//                .show();
-
     }
 
 
@@ -171,9 +144,7 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                 database.notedao().getNoteById(item.noteEntity.getId());
             }
         }).start();
-
     }
-
 
     @Override
     public boolean onQueryTextSubmit(final String query) {
@@ -185,19 +156,13 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         mAdapter.setList(list);
-
-
                     }
                 });
-
-
             }
         }).start();
         return false;
     }
-
 
     @Override
     public boolean onQueryTextChange(final String newText) {
@@ -211,12 +176,8 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                     public void run() {
 
                         mAdapter.setList(list);
-
-
                     }
                 });
-
-
             }
         }).start();
         return false;
@@ -224,23 +185,21 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
 
     @Override
     public void onClick(View v) {
-
     }
 
     @Override
     public void onLongClick(View view, int position) {
         final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
         new AlertDialog.Builder(view.getContext())
-                .setTitle("Delete")
-                .setMessage("Are you want to delete ?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                .setTitle("Sil")
+                .setMessage("Silmek istediğinizden emin misiniz?")
+                .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-
                                     for (MediaEntity mediaEntity : item.mediaAdapterList) {
                                         database.mediaDao().DeleteMedia(mediaEntity);
                                     }
@@ -250,30 +209,26 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                                 } catch (Exception e) {
                                     Log.e("hata", e.toString());
                                 }
-                                // notifyDataSetChanged();
-
-
                             }
                         }).start();
                     }
 
                 })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                .setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 }).show();
-
     }
 
     @Override
     public void onLongClickMedia(View view, final int position) {
         final Note item = ((NoteAdapter) rvMain.getAdapter()).list.get(position);
         new AlertDialog.Builder(view.getContext())
-                .setTitle("Delete")
-                .setMessage("Are you want to delete ?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                .setTitle("Sil")
+                .setMessage("Silmek istediğinizden emin misiniz?")
+                .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new Thread(new Runnable() {
@@ -287,15 +242,12 @@ public class NoteActivity extends AppCompatActivity implements AdapterOnCLickLis
                                 } catch (Exception e) {
                                     Log.e("hata", e.toString());
                                 }
-                                // notifyDataSetChanged();
-
-
                             }
                         }).start();
                     }
 
                 })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                .setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

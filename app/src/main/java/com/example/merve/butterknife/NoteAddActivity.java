@@ -3,6 +3,7 @@ package com.example.merve.butterknife;
 import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,8 +36,10 @@ import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.MediaEntity;
 import com.example.merve.butterknife.db.Entity.NoteEntity;
 import com.example.merve.butterknife.model.User;
+import com.hololo.library.photoviewer.PhotoViewer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -94,7 +99,6 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             if (!edtDetail.getText().toString().isEmpty() && !edtTitle.getText().toString().isEmpty()) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitAddNote.setVisibility(View.VISIBLE);
-                submitAddNote.setColorFilter(Color.GREEN);
                 mod = true;
             } else {
                 toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
@@ -102,6 +106,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             }
 
         }
+
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
@@ -116,6 +121,8 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
         setContentView(R.layout.activity_note_add);
         ButterKnife.bind(this);
 
+        edtDetail.setCursorVisible(false);
+        edtTitle.setCursorVisible(false);
         progress = new ProgressDialog(this);
         setSupportActionBar(toolbar);
         submitAddNote.setVisibility(GONE);
@@ -126,14 +133,13 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             @Override
             public void onClick(View v) {
                 if (!mod) {
-
                     finish();
                 } else {
                     edtDetail.setText(null);
                     edtTitle.setText(null);
                     edtTitle.requestFocusFromTouch();
-                    edtDetail.setHint("Note");
-                    edtTitle.setHint("Type your note");
+                    edtDetail.setHint("Not giriniz");
+                    edtTitle.setHint("Başlık giriniz");
                     crdview.setCardBackgroundColor(Color.WHITE);
                     noteAddCardV.setVisibility(GONE);
                     list2.clear();
@@ -141,12 +147,10 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
                     submitAddNote.setVisibility(GONE);
 
-
                 }
-
             }
         });
-
+        toolbar.setTitle("");
         database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
         noteAddRecyc.setHasFixedSize(true);
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -157,7 +161,13 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
         noteAddRecyc.setAdapter(mAdapter2);
         noteAddRecyc.setLayoutManager(LinearLayoutManager);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
+        noteAddCardV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
+            }
+        });
         if (btnRenk != null) {
             btnRenk.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,6 +193,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                     colorPicker
                             .setColorButtonTickColor(Color.WHITE)
                             .setDefaultColorButton(Color.parseColor("#f84c44"))
+                            .setTitle("Renk seçiniz")
                             .setColors(colors)
                             .setColumns(5)
                             .setRoundColorButton(true)
@@ -191,13 +202,13 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                                 public void onClick(View v, int position, int color) {
                                 }
                             })
-                            .addListenerButton("Cancel", buton2, new ColorPicker.OnButtonListener() {
+                            .addListenerButton("VAZGEÇ", buton2, new ColorPicker.OnButtonListener() {
                                 @Override
                                 public void onClick(View v, int position, int color) {
                                     colorPicker.dismissDialog();
                                 }
                             })
-                            .addListenerButton("OK", buton, new ColorPicker.OnButtonListener() {
+                            .addListenerButton("TAMAM", buton, new ColorPicker.OnButtonListener() {
                                 @Override
                                 public void onClick(View v, int position, int color) {
                                     Log.d("position", "" + position);
@@ -225,6 +236,34 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
         }
         edtDetail.addTextChangedListener(tw);
         edtTitle.addTextChangedListener(tw);
+        edtTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noteAddRecyc.setAdapter(mAdapter2);
+                edtTitle.setEnabled(true);
+                edtTitle.setFocusableInTouchMode(true);
+                edtTitle.setFocusable(true);
+                edtTitle.setCursorVisible(true);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                edtTitle.requestFocus();
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                edtTitle.setSelection(edtTitle.getText().length(), edtTitle.getText().length());
+            }
+        });
+        edtDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noteAddRecyc.setAdapter(mAdapter2);
+                edtDetail.setEnabled(true);
+                edtDetail.setFocusableInTouchMode(true);
+                edtDetail.setFocusable(true);
+                edtDetail.setCursorVisible(true);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                edtDetail.requestFocus();
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                edtDetail.setSelection(edtDetail.getText().length(), edtDetail.getText().length());
+            }
+        });
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -236,7 +275,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     }
 
     public void showProgressBar() {
-        progress.setMessage("Loading ..");
+        progress.setMessage("Yükleniyor..");
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
         progress.show();
@@ -276,9 +315,11 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
 
             super.onBackPressed();
         } else {
-            Toast.makeText(NoteAddActivity.this, "title or detail error", Toast.LENGTH_SHORT).show();
+
+            finish();
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -309,7 +350,6 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             if (size > 0) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitAddNote.setVisibility(View.VISIBLE);
-                submitAddNote.setColorFilter(Color.GREEN);
                 mod = true;
             }
 
@@ -327,7 +367,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
+        if (cursor == null) {
             result = contentURI.getPath();
         } else {
             cursor.moveToFirst();
@@ -346,29 +386,45 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
 
     @Override
     public void onClickMedia(View view, int position) {
+        if (!mAdapter2.selectedMod) {
+            final List<MediaEntity> item = ((MediaAdapter) noteAddRecyc.getAdapter()).list2;
 
+
+            ArrayList<File> fileList = new ArrayList<File>();
+            for (int i = 0; i < item.size(); i++) {
+
+                fileList.add(new File(item.get(i).getPath()));
+            }
+
+            new PhotoViewer.Builder(view.getContext())
+                    .file(fileList)
+                    .placeHolder(R.drawable.ic_image_black_24dp)
+                    .position(position)
+
+                    .build()
+                    .show();
+        }
     }
 
 
     @Override
     public void onClickCardView(View view, int position) {
-
     }
 
     @Override
     public void onLongClick(View view, int position) {
-
     }
 
     @Override
     public void onLongClickMedia(View view, int position) {
 
+        if (mAdapter2.selectedMod) {
+            mAdapter2.closeSelectedMod();
+        } else
+            mAdapter2.startSelectedMod();
+
     }
 
-    @Override
-    public void onDeleteClick(View view, int position) {
-
-    }
 
     @OnClick(R.id.submitAddNote)
     public void onViewClicked() {
@@ -410,11 +466,51 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                 }
             }).start();
         } else if (edtTitle.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Title can not go blank ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Notunuza başlık girmediniz ", Toast.LENGTH_SHORT).show();
         } else if (edtDetail.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Detail can not go blank ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Not girmediniz ", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    public void onDeleteClick(View view, final int position) {
+        final MediaEntity item = mAdapter2.list2.get(position);
+        new AlertDialog.Builder(view.getContext())
+                .setTitle("Sil")
+                .setMessage("Silmek istediğinizden emin misiniz? ")
+                .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+
+                                    database.mediaDao().deleteMediaById(item.getId());
+                                    runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+
+                                            list2.remove(item);
+                                            mAdapter2.setList2(list2);
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    Log.e("hata", e.toString());
+                                }
+                            }
+                        }).start();
+                    }
+
+                })
+                .setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+
+    }
 
 }

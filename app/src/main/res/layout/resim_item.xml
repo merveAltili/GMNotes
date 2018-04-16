@@ -29,8 +29,10 @@
             android:layout_height="30dp"
             android:layout_alignEnd="@+id/imgVItem"
             android:layout_alignParentTop="true"
+            android:backgroundTint="@color/white2"
+            android:padding="2dp"
             android:src="@drawable/ic_cancel_black_24dp"
-            android:tint="@color/red"
+            android:tint="#f99a3b"
             android:visibility="gone" />
 
     </RelativeLayout>

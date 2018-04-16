@@ -91,7 +91,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     Button detailColor;
     boolean mod = false;
     int sizeM = 0;
-
     private Note colonentity = new Note();
     private AppDatabase database;
     private MediaAdapter mAdapter;
@@ -104,17 +103,13 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             if (!detailText.getText().toString().isEmpty() && !detailDetail.getText().toString().isEmpty()) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitEditNote.setVisibility(View.VISIBLE);
-                submitEditNote.setColorFilter(Color.GREEN);
-
                 mod = true;
             } else {
-                submitEditNote.setColorFilter(Color.WHITE);
+                submitEditNote.setVisibility(View.GONE);
             }
         }
-
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
-
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
     };
@@ -122,8 +117,9 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_detail);
+
+
         ButterKnife.bind(this);
         progress = new ProgressDialog(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -131,13 +127,13 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
         mAdapter = new MediaAdapter(this, -1);
         noteAddRecyc2.setAdapter(mAdapter);
-
         detailDetail.setCursorVisible(false);
         detailText.setCursorVisible(false);
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         Bundle bundle = getIntent().getExtras();
         submitEditNote.setVisibility(GONE);
         entity = bundle.getParcelable("item");
+
         colonentity.noteEntity = new NoteEntity();
         colonentity.noteEntity.setTitle(entity.noteEntity.getTitle());
         colonentity.noteEntity.setDetail(entity.noteEntity.getDetail());
@@ -147,11 +143,11 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         mediaEntities.addAll(entity.mediaAdapterList);
         mAdapter.setList2(mediaEntities);
         u.setUsername(sharedPreferences.getString("username", ""));
+
         if (entity.mediaAdapterList.size() == 0) {
             noteAddCardV2.setVisibility(GONE);
         } else
             noteAddCardV2.setVisibility(View.VISIBLE);
-
 
         detailText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -164,6 +160,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 }
             }
         });
+
         detailDetail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -174,6 +171,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 }
             }
         });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
@@ -184,9 +182,9 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                     finish();
                 } else {
                     new AlertDialog.Builder(DetailActivity.this)
-                            .setTitle("Reset")
-                            .setMessage("Do you want to reset ?")
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            .setTitle("Sil")
+                            .setMessage("Silmek istediğinizden emin misiniz?")
+                            .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     entity.noteEntity.setTitle(colonentity.noteEntity.getTitle());
@@ -194,15 +192,20 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                     detailText.setText(entity.noteEntity.getTitle());
                                     detailDetail.setText(entity.noteEntity.getDetail());
                                     entity.noteEntity.setColors(colonentity.noteEntity.getColors());
-                                    crdview2.setCardBackgroundColor(entity.noteEntity.getColors());
-                                    noteAddCardV2.setVisibility(View.VISIBLE);
-                                    noteAddCardV2.setCardBackgroundColor(entity.noteEntity.getColors());
-                                    noteAddRecyc2.setBackgroundColor(entity.noteEntity.getColors());
+                                    if (entity.noteEntity.getColors() == 0) {
+                                        crdview2.setCardBackgroundColor(Color.WHITE);
+                                        noteAddCardV2.setCardBackgroundColor(Color.WHITE);
+                                        noteAddRecyc2.setBackgroundColor(Color.WHITE);
+                                    } else {
+                                        crdview2.setCardBackgroundColor(entity.noteEntity.getColors());
+                                        noteAddCardV2.setVisibility(View.VISIBLE);
+                                        noteAddCardV2.setCardBackgroundColor(entity.noteEntity.getColors());
+                                        noteAddRecyc2.setBackgroundColor(entity.noteEntity.getColors());
+                                    }
                                     entity.mediaAdapterList = colonentity.mediaAdapterList;
                                     mAdapter.setList2(entity.mediaAdapterList);
                                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
                                     submitEditNote.setVisibility(GONE);
-
 
                                     new Thread(new Runnable() {
                                         @Override
@@ -228,7 +231,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                 }
 
                             })
-                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -239,10 +242,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             }
         });
         toolbar.setTitle("");
-
-
         detailDetail.setText(entity.noteEntity.getDetail());
-
         detailDetail.setTextColor(Color.BLACK);
         if (entity.noteEntity.getColors() == 0) {
             crdview2.setCardBackgroundColor(Color.WHITE);
@@ -289,7 +289,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, 0);
-
                 }
             });
 
@@ -297,7 +296,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         detailText.addTextChangedListener(tw);
         detailDetail.addTextChangedListener(tw);
     }
-
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -321,7 +319,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     }
 
     public void showProgressBar() {
-        progress.setMessage("Loading ..");
+        progress.setMessage("Yükleniyor..");
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
         progress.show();
@@ -373,9 +371,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
         } else super.onBackPressed();
 
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -394,7 +390,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             if (sizeM > 0) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitEditNote.setVisibility(View.VISIBLE);
-                submitEditNote.setColorFilter(Color.GREEN);
                 mod = true;
             }
 
@@ -409,7 +404,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             if (sizeM > 0) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitEditNote.setVisibility(View.VISIBLE);
-                submitEditNote.setColorFilter(Color.GREEN);
                 mod = true;
             }
         }
@@ -431,11 +425,9 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 @Override
                 public void run() {
                     try {
-
                         entity.noteEntity.setUser(sharedPreferences.getString("username", ""));
                         entity.noteEntity.setDetail(detailDetail.getText().toString());
                         entity.noteEntity.setTitle(detailText.getText().toString());
-
                         if (colorr == 0) {
                             entity.noteEntity.setColors(entity.noteEntity.getColors());
                         } else
@@ -475,24 +467,8 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
 
         } else {
-            Toast.makeText(this, "Lütfen geçerli bir değer giriniz", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Not giriniz", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void onClickEdit(View view) {
-        noteAddRecyc2.setAdapter(mAdapter);
-        detailDetail.setEnabled(true);
-        detailDetail.setFocusableInTouchMode(true);
-        detailDetail.setFocusable(true);
-        detailText.setEnabled(true);
-        detailText.setFocusableInTouchMode(true);
-        detailText.setFocusable(true);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        detailText.requestFocus();
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        detailText.setSelection(detailText.getText().length(), detailText.getText().length());
-
-
     }
 
 
@@ -521,26 +497,23 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 colorPicker
                         .setColorButtonTickColor(Color.WHITE)
                         .setDefaultColorButton(Color.parseColor("#f84c44"))
+                        .setTitle("Renk seçiniz")
                         .setColors(colors)
                         .setColumns(5)
                         .setRoundColorButton(true)
                         .addListenerButton("", buton3, new ColorPicker.OnButtonListener() {
                             @Override
                             public void onClick(View v, int position, int color) {
-
-
                             }
                         })
-                        .addListenerButton("Cancel", buton2, new ColorPicker.OnButtonListener() {
+                        .addListenerButton("VAZGEÇ", buton2, new ColorPicker.OnButtonListener() {
                             @Override
                             public void onClick(View v, int position, int color) {
-
                                 colorPicker.dismissDialog();
-
                             }
                         })
 
-                        .addListenerButton("OK", buton, new ColorPicker.OnButtonListener() {
+                        .addListenerButton("TAMAM", buton, new ColorPicker.OnButtonListener() {
                             @Override
                             public void onClick(View v, int position, int color) {
                                 Log.d("position", "" + position);
@@ -551,16 +524,12 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                 noteAddRecyc2.setBackgroundColor(color);
                                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                                 submitEditNote.setVisibility(View.VISIBLE);
-                                submitEditNote.setColorFilter(Color.GREEN);
                                 mod = true;
-
                                 colorPicker.dismissDialog();
-
                             }
 
                         })
                         .show();
-
                 break;
             case R.id.detailMedia:
                 break;
@@ -622,9 +591,9 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     public void onDeleteClick(View view, final int position) {
         final MediaEntity item = mAdapter.list2.get(position);
         new AlertDialog.Builder(view.getContext())
-                .setTitle("Delete")
-                .setMessage("Are you want to delete ?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                .setTitle("Sil")
+                .setMessage("Silmek istedinizden emin misiniz?")
+                .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new Thread(new Runnable() {
@@ -633,7 +602,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                 try {
 
                                     database.mediaDao().deleteMediaById(item.getId());
-
                                     runOnUiThread(new Runnable() {
 
                                         @Override
@@ -643,8 +611,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                                             mAdapter.setList2(mediaEntities);
                                         }
                                     });
-
-
                                 } catch (Exception e) {
                                     Log.e("hata", e.toString());
                                 }
@@ -655,7 +621,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                     }
 
                 })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                .setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

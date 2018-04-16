@@ -14,9 +14,9 @@ import com.example.merve.butterknife.db.AppDatabase;
 import com.example.merve.butterknife.db.Entity.Note;
 import com.example.merve.butterknife.model.User;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -98,18 +98,17 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
     @Override
     public RemoteViews getViewAt(int position) {
+
         RemoteViews remoteView = new RemoteViews(
                 context.getPackageName(), R.layout.widget_note_item);
         if (noteList != null && getCount() > position) {
             Note note = noteList.get(position);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(note.noteEntity.getDate());
-            String date = formatter.format(calendar.getTime());
+            Date datee = new Date();
+            String stringDate = DateFormat.getDateInstance(DateFormat.MEDIUM).format(datee);
             if (note != null) {
                 remoteView.setTextViewText(R.id.widgettxtTitle, note.noteEntity.getTitle());
                 remoteView.setTextViewText(R.id.widgettxtDetail, note.noteEntity.getDetail());
-                remoteView.setTextViewText(R.id.widgettxtDate, date);
+                remoteView.setTextViewText(R.id.widgettxtDate, stringDate);
             }
             Bundle extras = new Bundle();
             extras.putInt(ExampleAppWidgetProvider.EXTRA_ITEM, position);
