@@ -133,20 +133,40 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             @Override
             public void onClick(View v) {
                 if (!mod) {
+                    v = getCurrentFocus();
+                    if (v != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
                     finish();
                 } else {
-                    edtDetail.setText(null);
-                    edtTitle.setText(null);
-                    edtTitle.requestFocusFromTouch();
-                    edtDetail.setHint("Not giriniz");
-                    edtTitle.setHint("Başlık giriniz");
-                    crdview.setCardBackgroundColor(Color.WHITE);
-                    noteAddCardV.setVisibility(GONE);
-                    list2.clear();
-                    mod = false;
-                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-                    submitAddNote.setVisibility(GONE);
+                    new AlertDialog.Builder(NoteAddActivity.this)
+                            .setTitle("Sil")
+                            .setMessage("Silmek istediğinizden emin misiniz?")
+                            .setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    edtDetail.setText(null);
+                                    edtTitle.setText(null);
+                                    edtTitle.requestFocusFromTouch();
+                                    edtDetail.setHint("Not giriniz");
+                                    edtTitle.setHint("Başlık giriniz");
+                                    list2.clear();
+                                    mAdapter2.setList2(list2);
+                                    crdview.setCardBackgroundColor(Color.WHITE);
+                                    noteAddCardV.setCardBackgroundColor(Color.WHITE);
+                                    noteAddRecyc.setBackgroundColor(Color.WHITE);
+                                    mod = false;
+                                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+                                    submitAddNote.setVisibility(GONE);
 
+                                }
+                            }).setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).show();
                 }
             }
         });
@@ -216,11 +236,12 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
                                     crdview.setCardBackgroundColor(color);
                                     noteAddCardV.setCardBackgroundColor(color);
                                     noteAddRecyc.setBackgroundColor(color);
-                                    mod = true;
                                     colorPicker.dismissDialog();
                                 }
                             })
                             .show();
+                    colorPicker.getmDialog().setCancelable(false);
+
                 }
 
             });
@@ -324,6 +345,7 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        Integer temp = 0;
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
@@ -347,13 +369,16 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
             txtMediaNote.setVisibility(GONE);
             noteAddCardV.setVisibility(View.VISIBLE);
             size = list2.size();
+            temp = size;
             if (size > 0) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitAddNote.setVisibility(View.VISIBLE);
                 mod = true;
             }
 
+
         }
+
 
     }
 
@@ -418,8 +443,11 @@ public class NoteAddActivity extends AppCompatActivity implements AdapterOnCLick
     @Override
     public void onLongClickMedia(View view, int position) {
 
+
         if (mAdapter2.selectedMod) {
+            mod = true;
             mAdapter2.closeSelectedMod();
+
         } else
             mAdapter2.startSelectedMod();
 

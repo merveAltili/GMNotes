@@ -99,7 +99,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
     private TextWatcher tw = new TextWatcher() {
         public void afterTextChanged(Editable s) {
             size = (int) detailDetail.getTextSize();
-
             if (!detailText.getText().toString().isEmpty() && !detailDetail.getText().toString().isEmpty()) {
                 toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                 submitEditNote.setVisibility(View.VISIBLE);
@@ -127,13 +126,12 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         database = Room.databaseBuilder(this, AppDatabase.class, "NoteDB").build();
         mAdapter = new MediaAdapter(this, -1);
         noteAddRecyc2.setAdapter(mAdapter);
-        detailDetail.setCursorVisible(false);
-        detailText.setCursorVisible(false);
         LinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         Bundle bundle = getIntent().getExtras();
         submitEditNote.setVisibility(GONE);
         entity = bundle.getParcelable("item");
-
+        detailText.setCursorVisible(false);
+        detailDetail.setCursorVisible(false);
         colonentity.noteEntity = new NoteEntity();
         colonentity.noteEntity.setTitle(entity.noteEntity.getTitle());
         colonentity.noteEntity.setDetail(entity.noteEntity.getDetail());
@@ -149,28 +147,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
         } else
             noteAddCardV2.setVisibility(View.VISIBLE);
 
-        detailText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    noteAddCardV2.setVisibility(View.VISIBLE);
-
-                } else {
-                    noteAddCardV2.setVisibility(GONE);
-                }
-            }
-        });
-
-        detailDetail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    noteAddCardV2.setVisibility(View.VISIBLE);
-                } else {
-                    noteAddCardV2.setVisibility(GONE);
-                }
-            }
-        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -179,6 +155,11 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
             @Override
             public void onClick(View v) {
                 if (!mod) {
+                    v = getCurrentFocus();
+                    if (v != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
                     finish();
                 } else {
                     new AlertDialog.Builder(DetailActivity.this)
@@ -262,6 +243,8 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 detailText.setFocusableInTouchMode(true);
                 detailText.setFocusable(true);
                 detailText.setCursorVisible(true);
+                noteAddCardV2.setFocusable(false);
+                noteAddRecyc2.setFocusable(false);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 detailText.requestFocus();
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -276,6 +259,8 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 detailDetail.setFocusableInTouchMode(true);
                 detailDetail.setFocusable(true);
                 detailDetail.setCursorVisible(true);
+                noteAddCardV2.setFocusable(false);
+                noteAddRecyc2.setFocusable(false);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 detailText.requestFocus();
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -486,6 +471,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                 colors.add("#F9FBE7");
                 colors.add("#F5F5F5");
                 colors.add("#E0F2F1");
+
                 colorPicker.disableDefaultButtons(true);
                 Button buton = new Button(getApplicationContext());
                 buton.setTextColor(Color.BLUE);
@@ -501,6 +487,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
                         .setColors(colors)
                         .setColumns(5)
                         .setRoundColorButton(true)
+                        .setDismissOnButtonListenerClick(false)
                         .addListenerButton("", buton3, new ColorPicker.OnButtonListener() {
                             @Override
                             public void onClick(View v, int position, int color) {
@@ -530,6 +517,8 @@ public class DetailActivity extends AppCompatActivity implements AdapterOnCLickL
 
                         })
                         .show();
+                colorPicker.getmDialog().setCancelable(false);
+
                 break;
             case R.id.detailMedia:
                 break;

@@ -28,7 +28,6 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
 
     User u = new User();
-    ;
     private List<Note> noteList = new ArrayList<>();
     private Context context;
     private int appWidgetId;
@@ -112,8 +111,9 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             }
             Bundle extras = new Bundle();
             extras.putInt(ExampleAppWidgetProvider.EXTRA_ITEM, position);
-            Intent fillInIntent = new Intent();
+            Intent fillInIntent = new Intent(context, DetailActivity.class);
             fillInIntent.putExtras(extras);
+            remoteView.setOnClickFillInIntent(R.id.noteItem, fillInIntent);
         }
         return remoteView;
     }

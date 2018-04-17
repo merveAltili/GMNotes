@@ -42,6 +42,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     }
 
     public void closeSelectedMod() {
+
         selectedMod = false;
         notifyDataSetChanged();
     }
